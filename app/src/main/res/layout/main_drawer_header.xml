@@ -10,7 +10,7 @@
         android:orientation="vertical"
         android:gravity="bottom"
         android:padding="16dp"
-        android:background="@drawable/price_shape">
+        android:background="#65B8DB">
 
         <ImageView
             android:layout_width="61dp"

@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -28,7 +29,7 @@ public class Login extends AppCompatActivity {
     private static final String API_KEY = "9e313fb763515473";
     private static final String ACCEPT = "application/json";
 
-    TextInputLayout correo, contraseña;
+    TextInputLayout correo, contrasenia;
 
     public interface ApiService {
         @GET("fulfillment")
@@ -48,7 +49,7 @@ public class Login extends AppCompatActivity {
         LoadingAlert loadingAlert = new LoadingAlert(Login.this);
 
         correo = findViewById(R.id.etCorreo);
-        contraseña = findViewById(R.id.etPassword);
+        contrasenia = findViewById(R.id.etPassword);
 
         // Obtener referencia al botón
         Button button = findViewById(R.id.button);
@@ -57,10 +58,9 @@ public class Login extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadingAlert.startAlertDialog();
                 // Obtener el correo y la contraseña del EditText
                 String userLogin = correo.getEditText().getText().toString();
-                String password = contraseña.getEditText().getText().toString();
+                String password = contrasenia.getEditText().getText().toString();
 
                 // Validar si los campos están vacíos
                 if (userLogin.isEmpty()) {
@@ -71,11 +71,12 @@ public class Login extends AppCompatActivity {
                 }
 
                 if (password.isEmpty()) {
-                    contraseña.setError("Por favor, ingrese la contraseña");
+                    contrasenia.setError("Por favor, ingrese la contraseña");
                     return;
                 } else {
-                    contraseña.setError(null); // Limpiar el error
+                    contrasenia.setError(null); // Limpiar el error
                 }
+                loadingAlert.startAlertDialog();
 
                 // Crear una instancia de Retrofit
                 Retrofit retrofit = new Retrofit.Builder()
@@ -107,12 +108,15 @@ public class Login extends AppCompatActivity {
 
                             // Verificar la respuesta
                             if ("ERROR".equals(apiResponse.getStatus())) {
+                                loadingAlert.closeAlertDialog();
                                 // Mostrar un Toast si el correo es incorrecto
                                 Toast.makeText(Login.this, "Correo incorrecto", Toast.LENGTH_SHORT).show();
                             } else {
                                 // Iniciar MainActivity si la respuesta es válida
+                                loadingAlert.closeAlertDialog();
                                 Intent intent = new Intent(Login.this, InicioActivity.class);
                                 startActivity(intent);
+                                finish();
                             }
                         } else {
                             Log.e(TAG, "Error en la respuesta de la API: " + response.errorBody());
@@ -128,5 +132,7 @@ public class Login extends AppCompatActivity {
                 });
             }
         });
+
     }
+
 }

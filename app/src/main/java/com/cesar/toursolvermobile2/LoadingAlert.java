@@ -9,11 +9,9 @@ public class LoadingAlert {
 
     private Activity activity;
     private AlertDialog dialog;
-    private Handler handler;
 
     LoadingAlert(Activity myActivity) {
         activity = myActivity;
-        handler = new Handler();
     }
 
     void startAlertDialog(){
@@ -26,14 +24,6 @@ public class LoadingAlert {
 
         dialog = builder.create();
         dialog.show();
-
-        // Cerrar el diálogo después de 3 segundos
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                closeAlertDialog();
-            }
-        }, 1000); // 2000 milisegundos = 2 segundos
     }
 
     void closeAlertDialog(){

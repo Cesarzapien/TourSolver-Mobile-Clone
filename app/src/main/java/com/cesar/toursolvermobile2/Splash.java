@@ -2,6 +2,7 @@ package com.cesar.toursolvermobile2;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
@@ -17,6 +18,7 @@ public class Splash extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         ImageView imageView = findViewById(R.id.imageView);
         // Definir la animación de escala
         final Animation animation = new ScaleAnimation(
