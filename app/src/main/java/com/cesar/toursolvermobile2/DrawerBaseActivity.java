@@ -63,12 +63,19 @@ public class DrawerBaseActivity extends AppCompatActivity implements NavigationV
         } else if (itemId==R.id.nav_settings) {
             iniciarNuevaActividad(SettingsActivity.class);
         } else if (itemId==R.id.nav_logout) {
-            iniciarNuevaActividad(Login.class);
+            // Iniciar Login sin pasar extra
+            Intent intent = new Intent(this, Login.class);
+            startActivity(intent);
+            finish();
         }
     }
+
 
     private void iniciarNuevaActividad(Class<?> destinoactividad){
         startActivity(new Intent(this,destinoactividad));
         overridePendingTransition(0,0);
     }
+
+
+
 }
