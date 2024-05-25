@@ -7,13 +7,54 @@
     android:layout_height="match_parent"
     tools:context=".InicioActivity">
 
+    <LinearLayout
+        android:id="@+id/linear_profile"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:padding="16dp"
+        android:background="#eae8ed"
+        tools:ignore="MissingConstraints">
+
+        <include
+            android:id="@+id/profile_pic_view2"
+            layout="@layout/profile_pic_view_inicio"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:id="@+id/profilename"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Erick Villaseñor"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Actualizado hoy a las 12:50"
+            android:textSize="14sp"
+            android:textColor="#FFA500"
+            android:textStyle="bold"/>
+
+    </LinearLayout>
+
     <TextView
+        android:id="@+id/proxima_cita_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Próxima cita"
+        android:textColor="#828181"
+        app:layout_constraintTop_toBottomOf="@id/linear_profile"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="16dp"
+        android:textStyle="bold"
+        android:textSize="16sp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

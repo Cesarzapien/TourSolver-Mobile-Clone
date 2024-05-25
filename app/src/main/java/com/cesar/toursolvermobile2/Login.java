@@ -2,16 +2,21 @@ package com.cesar.toursolvermobile2;
 
 import static android.content.ContentValues.TAG;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
+import com.cesar.toursolvermobile2.DB.DBHelper;
+import com.cesar.toursolvermobile2.DB.User;
 import com.google.android.material.textfield.TextInputLayout;
 
 import retrofit2.Call;
@@ -25,13 +30,14 @@ import retrofit2.http.Query;
 
 public class Login extends AppCompatActivity {
 
-    private static final String BASE_URL = "https://api.geoconcept.com/tsapi/";
-    private static final String API_KEY = "9e313fb763515473";
-    private static final String ACCEPT = "application/json";
+    //private static final String BASE_URL = "https://api.geoconcept.com/tsapi/";
+    //private static final String API_KEY = "9e313fb763515473";
+    //private static final String ACCEPT = "application/json";
 
     TextInputLayout correo, contrasenia;
+    CheckBox rememberMeCheckBox;
 
-    public interface ApiService {
+    /*public interface ApiService {
         @GET("fulfillment")
         Call<ApiResponse> getFulfillment(
                 @Header("tsCloudApiKey") String apiKey,
@@ -40,7 +46,7 @@ public class Login extends AppCompatActivity {
                 @Query("startDate") String startDate,
                 @Query("userLogin") String userLogin
         );
-    }
+    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +56,10 @@ public class Login extends AppCompatActivity {
 
         correo = findViewById(R.id.etCorreo);
         contrasenia = findViewById(R.id.etPassword);
+        rememberMeCheckBox = findViewById(R.id.checkBox2);
+
+        // Cargar credenciales guardadas si existen
+        loadCredentials();
 
         // Obtener referencia al botón
         Button button = findViewById(R.id.button);
@@ -78,8 +88,37 @@ public class Login extends AppCompatActivity {
                 }
                 loadingAlert.startAlertDialog();
 
+                // Crear una instancia de DBHelper
+                DBHelper dbHelper = new DBHelper(Login.this);
+
+                // Verificar las credenciales del usuario
+                if (dbHelper.checkUserCredentials(userLogin, password)) {
+                    loadingAlert.closeAlertDialog();
+                    // Guardar las credenciales si el checkbox está activado
+                    if (rememberMeCheckBox.isChecked()) {
+                        saveCredentials(userLogin, password);
+                    } else {
+                        clearCredentials();
+                    }
+
+                    // Obtener los detalles del usuario
+                    User user = dbHelper.getUser(userLogin);
+                    if (user != null) {
+                        String fullName = user.getFirstName() + " " + user.getLastName();
+                        Intent intent = new Intent(Login.this, InicioActivity.class);
+                        intent.putExtra("user_name", fullName);
+                        intent.putExtra("user_email", user.getEmail());
+                        startActivity(intent);
+                        finish();
+                    }
+                } else {
+                    loadingAlert.closeAlertDialog();
+                    // Mostrar un Toast si las credenciales son incorrectas
+                    Toast.makeText(Login.this, "Correo o contraseña incorrectos", Toast.LENGTH_SHORT).show();
+                }
+
                 // Crear una instancia de Retrofit
-                Retrofit retrofit = new Retrofit.Builder()
+                /*Retrofit retrofit = new Retrofit.Builder()
                         .baseUrl(BASE_URL)
                         .addConverterFactory(GsonConverterFactory.create())
                         .build();
@@ -129,10 +168,40 @@ public class Login extends AppCompatActivity {
                         Log.e(TAG, "Error en la llamada a la API", t);
                         Toast.makeText(Login.this, "Error en la llamada a la API", Toast.LENGTH_SHORT).show();
                     }
-                });
+                });*/
             }
         });
 
     }
 
+    private void saveCredentials(String email, String password) {
+        SharedPreferences sharedPreferences = getSharedPreferences("LoginPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("email", email);
+        editor.putString("password", password);
+        editor.putBoolean("rememberMe", true);
+        editor.apply();
+    }
+
+    private void clearCredentials() {
+        SharedPreferences sharedPreferences = getSharedPreferences("LoginPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove("email");
+        editor.remove("password");
+        editor.putBoolean("rememberMe", false);
+        editor.apply();
+    }
+
+    private void loadCredentials() {
+        SharedPreferences sharedPreferences = getSharedPreferences("LoginPrefs", Context.MODE_PRIVATE);
+        boolean rememberMe = sharedPreferences.getBoolean("rememberMe", false);
+        if (rememberMe) {
+            String email = sharedPreferences.getString("email", "");
+            String password = sharedPreferences.getString("password", "");
+            correo.getEditText().setText(email);
+            contrasenia.getEditText().setText(password);
+            rememberMeCheckBox.setChecked(true);
+        }
+
+    }
 }

@@ -2,4 +2,6 @@
     <string name="app_name">TourSolver Mobile 2</string>
     <string name="open_navigation_drawer">Open</string>
     <string name="close_navigation_drawer">Close</string>
+    <string name="user_name">Cesar Zapien</string>
+    <string name="user_email">cesarinss08@gmail.com</string>
 </resources>

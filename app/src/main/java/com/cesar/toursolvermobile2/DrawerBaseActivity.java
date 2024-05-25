@@ -52,27 +52,55 @@ public class DrawerBaseActivity extends AppCompatActivity implements NavigationV
     }
 
     private void manejaracciondenavegacion (int itemId){
+
+        // Obtener los datos actuales del usuario
+        Intent currentIntent = getIntent();
+        String userName = currentIntent.getStringExtra("user_name");
+        String userEmail = currentIntent.getStringExtra("user_email");
+
+        Intent intent = null;
+
         if(itemId == R.id.nav_inicio){
-            iniciarNuevaActividad(InicioActivity.class);
+            intent = new Intent(this, InicioActivity.class);
+            finish();
+            overridePendingTransition(0,0);
         }else if (itemId==R.id.nav_agenda){
-            iniciarNuevaActividad(AgendaActivity.class);
+            intent = new Intent(this, AgendaActivity.class);
+            finish();
+            overridePendingTransition(0,0);
         } else if (itemId==R.id.nav_sites) {
-            iniciarNuevaActividad(SitesActivity.class);
+            intent = new Intent(this, SitesActivity.class);
+            finish();
+            overridePendingTransition(0,0);
         } else if (itemId==R.id.nav_leads) {
-            iniciarNuevaActividad(LeadsActivity.class);
+            intent = new Intent(this, LeadsActivity.class);
+            finish();
+            overridePendingTransition(0,0);
         } else if (itemId==R.id.nav_settings) {
-            iniciarNuevaActividad(SettingsActivity.class);
+            intent = new Intent(this, SettingsActivity.class);
+            finish();
+            overridePendingTransition(0,0);
         } else if (itemId==R.id.nav_logout) {
             // Iniciar Login sin pasar extra
-            Intent intent = new Intent(this, Login.class);
+            intent = new Intent(this, Login.class);
             startActivity(intent);
             finish();
         }
+
+        if (intent != null) {
+            intent.putExtra("user_name", userName);
+            intent.putExtra("user_email", userEmail);
+            startActivity(intent);
+            finish();
+            overridePendingTransition(0,0);
+        }
+
     }
 
 
     private void iniciarNuevaActividad(Class<?> destinoactividad){
         startActivity(new Intent(this,destinoactividad));
+        finish();
         overridePendingTransition(0,0);
     }
 

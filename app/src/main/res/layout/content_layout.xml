@@ -8,16 +8,17 @@
         android:layout_height="wrap_content"
         android:id="@+id/appBarLayout"
         app:layout_constraintTop_toTopOf="parent">
-        
+
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolBar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorPrimary"
-            app:titleTextColor="@color/white"/>
+            android:elevation="9dp"
+        app:titleTextColor="@color/white"/>
 
     </com.google.android.material.appbar.AppBarLayout>
-    
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
