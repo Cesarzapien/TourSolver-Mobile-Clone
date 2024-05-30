@@ -153,10 +153,10 @@ public class Login extends AppCompatActivity {
                     List<OperationalOrderAchievement> achievementsList = apiResponse.getOperationalOrderAchievements();
                     List<PlannedOrder> plannedOrders = new ArrayList<>();
 
-                    // Obtener la lista de PlannedOrder de OperationalOrderAchievement
+                    // Obtener la lista de PlannedOrder de OperationalOrderAchievement y filtrar los elementos con stopId "Llegada"
                     for (OperationalOrderAchievement achievement : achievementsList) {
                         PlannedOrder plannedOrder = achievement.getPlannedOrder();
-                        if (plannedOrder != null) {
+                        if (plannedOrder != null && !"Llegada".equals(plannedOrder.getStopId())) {
                             plannedOrders.add(plannedOrder);
                         }
                     }

@@ -10,7 +10,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cesar.toursolvermobile2.R;
 import com.cesar.toursolvermobile2.model.PlannedOrder;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class PlannedOrderAdapter extends RecyclerView.Adapter<PlannedOrderAdapter.PlannedOrderViewHolder> {
 
@@ -32,7 +38,10 @@ public class PlannedOrderAdapter extends RecyclerView.Adapter<PlannedOrderAdapte
     @Override
     public void onBindViewHolder(@NonNull PlannedOrderViewHolder holder, int position) {
         PlannedOrder plannedOrder = plannedOrders.get(position);
-        holder.bind(plannedOrder);
+
+        if (!"Llegada".equals(plannedOrder.getStopId())) {
+            holder.bind(plannedOrder);
+        }
     }
 
     @Override
@@ -51,8 +60,35 @@ public class PlannedOrderAdapter extends RecyclerView.Adapter<PlannedOrderAdapte
         }
 
         public void bind(PlannedOrder plannedOrder) {
-            tvTime1.setText(plannedOrder.getStopStartTime());
-            tvTime2.setText(plannedOrder.getStopStartTime()); // Cambiar por el campo correspondiente
+            SimpleDateFormat inputFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+            SimpleDateFormat outputFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+
+            try {
+                // Parsear stopStartTime
+                Date startTime = inputFormat.parse(plannedOrder.getStopStartTime());
+                // Formatear stopStartTime a "HH:mm"
+                String formattedStartTime = outputFormat.format(startTime);
+                tvTime1.setText(formattedStartTime);
+
+                // Parsear stopDuration
+                String[] durationParts = plannedOrder.getStopDuration().split(":");
+                int durationMinutes = Integer.parseInt(durationParts[1]);
+
+                // Crear un calendario para sumar stopDuration a startTime
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(startTime);
+                calendar.add(Calendar.MINUTE, durationMinutes);
+
+                // Formatear el tiempo final a "HH:mm"
+                String formattedEndTime = outputFormat.format(calendar.getTime());
+                tvTime2.setText(formattedEndTime);
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+                tvTime1.setText(plannedOrder.getStopStartTime());
+                tvTime2.setText(plannedOrder.getStopStartTime()); // o algún valor por defecto
+            }
+
             tvRoute.setText(plannedOrder.getResourceId()); // Cambiar por el campo correspondiente
         }
     }
