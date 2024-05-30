@@ -8,11 +8,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.cesar.toursolvermobile2.adapter.PlannedOrderAdapter;
 import com.cesar.toursolvermobile2.databinding.ActivityInicioBinding;
+import com.cesar.toursolvermobile2.model.Order;
+import com.cesar.toursolvermobile2.model.PlannedOrder;
 import com.google.android.material.navigation.NavigationView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class InicioActivity extends DrawerBaseActivity {
 
@@ -23,6 +30,9 @@ public class InicioActivity extends DrawerBaseActivity {
     private static final long COUNTDOWN_TIME = 180000; // 3 minutos
     private boolean isPaused = true;
 
+    private RecyclerView recyclerView;
+    private PlannedOrderAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,9 +40,19 @@ public class InicioActivity extends DrawerBaseActivity {
         setContentView(activityInicioBinding.getRoot());
 
         // Obtener los datos del Intent
-        Intent intent = getIntent();
+        /*Intent intent = getIntent();
         String userName = intent.getStringExtra("user_name");
-        String userEmail = intent.getStringExtra("user_email");
+        String userEmail = intent.getStringExtra("user_email");*/
+
+        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // Obtener los datos de PlannedOrder del intent
+        List<PlannedOrder> plannedOrders = getIntent().getParcelableArrayListExtra("plannedOrders");
+
+        // Configurar el RecyclerView con el adaptador
+        adapter = new PlannedOrderAdapter(this, plannedOrders);
+        recyclerView.setAdapter(adapter);
 
         // Obtener la referencia del NavigationView
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -46,14 +66,14 @@ public class InicioActivity extends DrawerBaseActivity {
         userEmaill = headerView.findViewById(R.id.useremail); // Asegúrate de tener este TextView en tu layout
 
         // Sobrescribir los strings
-        if (userName != null) {
+        /*if (userName != null) {
             userNamee.setText(userName);
             profileName.setText(userName);
         }
 
         if (userEmail != null) {
             userEmaill.setText(userEmail);
-        }
+        }*/
 
         activityInicioBinding.getRoot().setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,6 +81,25 @@ public class InicioActivity extends DrawerBaseActivity {
                 resetTimer();
             }
         });
+    }
+
+    private List<Object> combineLists(ArrayList<PlannedOrder> plannedOrders, ArrayList<Order> orders) {
+        List<Object> combinedList = new ArrayList<>();
+
+        // Si plannedOrders es null o vacío, añadir un elemento por defecto
+        if (plannedOrders == null || plannedOrders.isEmpty()) {
+            combinedList.add("No hay datos disponibles");
+        } else {
+            // Si plannedOrders no es null, agregar los datos de plannedOrders
+            combinedList.addAll(plannedOrders);
+        }
+
+        // Si orders no es null y tiene elementos, agregar los datos de orders
+        if (orders != null && !orders.isEmpty()) {
+            combinedList.addAll(orders);
+        }
+
+        return combinedList;
     }
 
     @Override

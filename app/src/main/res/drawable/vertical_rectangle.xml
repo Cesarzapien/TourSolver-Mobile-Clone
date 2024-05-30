@@ -1,0 +1,5 @@
+<!-- red_rectangle.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#e08081" /> <!-- Color rojo -->
+</shape>
