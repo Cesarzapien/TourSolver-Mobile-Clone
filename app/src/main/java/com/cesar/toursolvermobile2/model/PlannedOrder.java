@@ -10,6 +10,7 @@ public class PlannedOrder implements Parcelable {
     private String resourceId;
     @SerializedName("dayId")
     private String dayId;
+
     @SerializedName("stopId")
     private String stopId;
     @SerializedName("stopPosition")

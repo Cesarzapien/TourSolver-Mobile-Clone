@@ -4,11 +4,13 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cesar.toursolvermobile2.R;
+import com.cesar.toursolvermobile2.model.Order;
 import com.cesar.toursolvermobile2.model.PlannedOrder;
 
 import java.text.ParseException;
@@ -21,11 +23,13 @@ import java.util.Locale;
 public class PlannedOrderAdapter extends RecyclerView.Adapter<PlannedOrderAdapter.PlannedOrderViewHolder> {
 
     private List<PlannedOrder> plannedOrders;
+    private List<Order> orders;
     private Context context;
 
-    public PlannedOrderAdapter(Context context, List<PlannedOrder> plannedOrders) {
+    public PlannedOrderAdapter(Context context, List<PlannedOrder> plannedOrders, List<Order> orders) { // Add orders here
         this.context = context;
         this.plannedOrders = plannedOrders;
+        this.orders = orders; // Add this line
     }
 
     @NonNull
@@ -38,9 +42,10 @@ public class PlannedOrderAdapter extends RecyclerView.Adapter<PlannedOrderAdapte
     @Override
     public void onBindViewHolder(@NonNull PlannedOrderViewHolder holder, int position) {
         PlannedOrder plannedOrder = plannedOrders.get(position);
+        Order order = orders.get(position); // Get corresponding order
 
         if (!"Llegada".equals(plannedOrder.getStopId())) {
-            holder.bind(plannedOrder);
+            holder.bind(plannedOrder, order); // Pass order to bind method
         }
     }
 
@@ -51,15 +56,17 @@ public class PlannedOrderAdapter extends RecyclerView.Adapter<PlannedOrderAdapte
 
     public class PlannedOrderViewHolder extends RecyclerView.ViewHolder {
         TextView tvTime1, tvTime2, tvRoute;
+        ImageView tvIcon;
 
         public PlannedOrderViewHolder(@NonNull View itemView) {
             super(itemView);
             tvTime1 = itemView.findViewById(R.id.tv_time1);
             tvTime2 = itemView.findViewById(R.id.tv_time2);
             tvRoute = itemView.findViewById(R.id.tv_route);
+            tvIcon = itemView.findViewById(R.id.tv_icon);
         }
 
-        public void bind(PlannedOrder plannedOrder) {
+        public void bind(PlannedOrder plannedOrder, Order order) { // Add order as parameter
             SimpleDateFormat inputFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
             SimpleDateFormat outputFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
@@ -89,7 +96,19 @@ public class PlannedOrderAdapter extends RecyclerView.Adapter<PlannedOrderAdapte
                 tvTime2.setText(plannedOrder.getStopStartTime()); // o algún valor por defecto
             }
 
-            tvRoute.setText(plannedOrder.getResourceId()); // Cambiar por el campo correspondiente
+            // Set the route label from order
+            if (order != null) {
+                tvRoute.setText(order.getLabel());
+            } else {
+                tvRoute.setText("Itinerario");
+            }
+
+            // Set the icon drawable based on stopId
+            if ("Salida".equals(plannedOrder.getStopId())) {
+                tvIcon.setImageResource(R.drawable.itinerario_logo);
+            } else {
+                tvIcon.setImageResource(R.drawable.logo_cita_aceptada);
+            }
         }
     }
 }

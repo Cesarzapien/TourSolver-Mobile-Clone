@@ -20,10 +20,15 @@ import com.cesar.toursolvermobile2.model.ApiResponse;
 import com.cesar.toursolvermobile2.model.OperationalOrderAchievement;
 import com.cesar.toursolvermobile2.model.Order;
 import com.cesar.toursolvermobile2.model.PlannedOrder;
+import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -63,6 +68,19 @@ public class Login extends AppCompatActivity {
         contrasenia = findViewById(R.id.etPassword);
         rememberMeCheckBox = findViewById(R.id.checkBox2);
 
+        // Obtener la fecha y hora actual
+        Calendar calendar = Calendar.getInstance();
+        Date currentDate = calendar.getTime();
+
+        // Calcular la fecha para el día siguiente
+        calendar.add(Calendar.DAY_OF_YEAR, 1);
+        Date tomorrowDate = calendar.getTime();
+
+        // Formatear las fechas en el formato necesario para la llamada a la API
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+        String startDate = sdf.format(currentDate);
+        String endDate = sdf.format(tomorrowDate);
+
         // Cargar credenciales guardadas si existen
         loadCredentials();
 
@@ -73,12 +91,12 @@ public class Login extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                handleLogin();
+                handleLogin(startDate, endDate); // Pasar las fechas como argumentos
             }
         });
     }
 
-    private void handleLogin() {
+    private void handleLogin(String startDate, String endDate) {
         // Obtener el correo y la contraseña del TextInputLayout
         String userLogin = correo.getEditText().getText().toString();
         String password = contrasenia.getEditText().getText().toString();
@@ -114,8 +132,14 @@ public class Login extends AppCompatActivity {
                 clearCredentials();
             }
 
-            // Realizar la llamada a la API
-            callApi(userLogin, loadingAlert);
+            // Obtener los detalles del usuario
+            User user = dbHelper.getUser(userLogin);
+            if(user != null){
+                String fullName = user.getFirstName() + " " + user.getLastName();
+                // Realizar la llamada a la API
+                callApi(userLogin, loadingAlert, fullName, user.getEmail(), startDate, endDate);
+            }
+
         } else {
             loadingAlert.closeAlertDialog();
             // Mostrar un Toast si las credenciales son incorrectas
@@ -123,7 +147,7 @@ public class Login extends AppCompatActivity {
         }
     }
 
-    private void callApi(String userLogin, LoadingAlert loadingAlert) {
+    private void callApi(String userLogin, LoadingAlert loadingAlert, String fullName, String email, String startDate, String endDate) {
         // Crear una instancia de Retrofit
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -137,8 +161,8 @@ public class Login extends AppCompatActivity {
         Call<ApiResponse> call = apiService.getFulfillment(
                 API_KEY,
                 ACCEPT,
-                "2024-05-30T00:00:00",
-                "2024-05-29T00:00:00",
+                endDate, // Usar la fecha de mañana como endDate
+                startDate, // Usar la fecha actual como startDate
                 userLogin
         );
 
@@ -152,6 +176,7 @@ public class Login extends AppCompatActivity {
 
                     List<OperationalOrderAchievement> achievementsList = apiResponse.getOperationalOrderAchievements();
                     List<PlannedOrder> plannedOrders = new ArrayList<>();
+                    List<Order> orders = new ArrayList<>();
 
                     // Obtener la lista de PlannedOrder de OperationalOrderAchievement y filtrar los elementos con stopId "Llegada"
                     for (OperationalOrderAchievement achievement : achievementsList) {
@@ -161,9 +186,21 @@ public class Login extends AppCompatActivity {
                         }
                     }
 
-                    // Enviar los datos a InicioActivity
+                    // Obtener la lista de PlannedOrder de OperationalOrderAchievement y filtrar los elementos con stopId "Llegada"
+                    for (OperationalOrderAchievement achievement : achievementsList) {
+                        Order order = achievement.getOrder();
+                        orders.add(order);
+                    }
+
+                    Log.e(TAG,"Orders"+orders.toString());
+
+                    Log.e(TAG,"PlannedOrders"+plannedOrders.toString());
+
                     Intent intent = new Intent(Login.this, InicioActivity.class);
                     intent.putParcelableArrayListExtra("plannedOrders", new ArrayList<>(plannedOrders));
+                    intent.putParcelableArrayListExtra("orders", new ArrayList<>(orders));
+                    intent.putExtra("user_name", fullName);
+                    intent.putExtra("user_email", email);
                     startActivity(intent);
                     finish();
                 } else {

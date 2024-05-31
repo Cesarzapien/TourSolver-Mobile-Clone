@@ -1,10 +1,13 @@
 package com.cesar.toursolvermobile2.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Arrays;
 
-public class Order {
+public class Order implements Parcelable {
     @SerializedName("id")
     private String id;
     @SerializedName("label")
@@ -156,6 +159,126 @@ public class Order {
 
     @SerializedName("possibleVisitDays")
     private String [] possibleVisitDays;
+
+    protected Order(Parcel in) {
+        id = in.readString();
+        label = in.readString();
+        requiredSkills = in.createStringArray();
+        allSkillsRequired = in.readString();
+        active = in.readString();
+        quantities = in.createStringArray();
+        unloadingDurationPerUnit = in.readString();
+        type = in.readString();
+        fixedVisitDuration = in.readString();
+        timeWindows = in.createStringArray();
+        wholeVisitInTimeWindow = in.readString();
+        punctuality = in.readString();
+        delayPenaltyPerHour = in.readString();
+        frequency = in.readString();
+        minDuration = in.readString();
+        minPartDuration = in.readString();
+        excludeResources = in.createStringArray();
+        assignResources = in.createStringArray();
+        assignCosts = in.createStringArray();
+        documentReferences = in.createStringArray();
+        courierPenalty = in.readString();
+        sequenceNumber = in.readString();
+        x = in.readDouble();
+        y = in.readDouble();
+        resourceCompatibility = in.readString();
+        streetSide = in.readString();
+        tsOrderMaximumSpacing = in.readString();
+        tsOrderMinimumSpacing = in.readString();
+        tsOrderLastVisit = in.readString();
+        customerId = in.readString();
+        sector = in.readString();
+        email = in.readString();
+        phone = in.readString();
+        tsOrderBefore = in.readString();
+        tsOrderBeforeMaxTimeSpacing = in.readString();
+        tsOrderBeforeMinTimeSpacing = in.readString();
+        getNotifications = in.readString();
+        tsOrderFixed = in.readString();
+        scanItems = in.createStringArray();
+        invoiceId = in.readString();
+        originalOperationalId = in.readString();
+        maxDelayTime = in.readString();
+        maxDurationBeforeDepotDrop = in.readString();
+        allowedDepots = in.readString();
+        providedProducts = in.readString();
+        tsOrderDisjoint = in.readString();
+        customDataMap = in.readParcelable(CustomDataMap.class.getClassLoader());
+        possibleVisitDays = in.createStringArray();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(label);
+        dest.writeStringArray(requiredSkills);
+        dest.writeString(allSkillsRequired);
+        dest.writeString(active);
+        dest.writeStringArray(quantities);
+        dest.writeString(unloadingDurationPerUnit);
+        dest.writeString(type);
+        dest.writeString(fixedVisitDuration);
+        dest.writeStringArray(timeWindows);
+        dest.writeString(wholeVisitInTimeWindow);
+        dest.writeString(punctuality);
+        dest.writeString(delayPenaltyPerHour);
+        dest.writeString(frequency);
+        dest.writeString(minDuration);
+        dest.writeString(minPartDuration);
+        dest.writeStringArray(excludeResources);
+        dest.writeStringArray(assignResources);
+        dest.writeStringArray(assignCosts);
+        dest.writeStringArray(documentReferences);
+        dest.writeString(courierPenalty);
+        dest.writeString(sequenceNumber);
+        dest.writeDouble(x);
+        dest.writeDouble(y);
+        dest.writeString(resourceCompatibility);
+        dest.writeString(streetSide);
+        dest.writeString(tsOrderMaximumSpacing);
+        dest.writeString(tsOrderMinimumSpacing);
+        dest.writeString(tsOrderLastVisit);
+        dest.writeString(customerId);
+        dest.writeString(sector);
+        dest.writeString(email);
+        dest.writeString(phone);
+        dest.writeString(tsOrderBefore);
+        dest.writeString(tsOrderBeforeMaxTimeSpacing);
+        dest.writeString(tsOrderBeforeMinTimeSpacing);
+        dest.writeString(getNotifications);
+        dest.writeString(tsOrderFixed);
+        dest.writeStringArray(scanItems);
+        dest.writeString(invoiceId);
+        dest.writeString(originalOperationalId);
+        dest.writeString(maxDelayTime);
+        dest.writeString(maxDurationBeforeDepotDrop);
+        dest.writeString(allowedDepots);
+        dest.writeString(providedProducts);
+        dest.writeString(tsOrderDisjoint);
+        dest.writeParcelable(customDataMap, flags);
+        dest.writeStringArray(possibleVisitDays);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Order> CREATOR = new Creator<Order>() {
+        @Override
+        public Order createFromParcel(Parcel in) {
+            return new Order(in);
+        }
+
+        @Override
+        public Order[] newArray(int size) {
+            return new Order[size];
+        }
+    };
 
     public String getId() {
         return id;
