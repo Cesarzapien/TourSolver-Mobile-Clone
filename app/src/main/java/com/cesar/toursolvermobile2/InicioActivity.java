@@ -39,7 +39,7 @@ public class InicioActivity extends DrawerBaseActivity {
     private SimpleDateFormat outputFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
     // TextView para mostrar la próxima cita
-    private TextView citaHoraTextView;
+    private TextView citaHoraTextView,horaa;
 
     private RecyclerView recyclerView;
     private PlannedOrderAdapter adapter;
@@ -52,11 +52,17 @@ public class InicioActivity extends DrawerBaseActivity {
 
         // Referenciar el TextView de la próxima cita
         citaHoraTextView = findViewById(R.id.cita_hora);
+        horaa = findViewById(R.id.horaa);
 
         // Obtener los datos del Intent
         Intent intent = getIntent();
         String userName = intent.getStringExtra("user_name");
         String userEmail = intent.getStringExtra("user_email");
+        String hora_exact = intent.getStringExtra("hora_exacta");
+
+        horaa.setText("Actualizado hoy a las " +hora_exact);
+
+
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

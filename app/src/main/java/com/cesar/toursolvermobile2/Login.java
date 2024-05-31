@@ -78,6 +78,8 @@ public class Login extends AppCompatActivity {
 
         // Formatear las fechas en el formato necesario para la llamada a la API
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+        SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm",Locale.getDefault());
+        String hour = sdf2.format(currentDate);
         String startDate = sdf.format(currentDate);
         String endDate = sdf.format(tomorrowDate);
 
@@ -91,12 +93,12 @@ public class Login extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                handleLogin(startDate, endDate); // Pasar las fechas como argumentos
+                handleLogin(startDate, endDate,hour); // Pasar las fechas como argumentos
             }
         });
     }
 
-    private void handleLogin(String startDate, String endDate) {
+    private void handleLogin(String startDate, String endDate, String hour) {
         // Obtener el correo y la contraseña del TextInputLayout
         String userLogin = correo.getEditText().getText().toString();
         String password = contrasenia.getEditText().getText().toString();
@@ -137,7 +139,7 @@ public class Login extends AppCompatActivity {
             if(user != null){
                 String fullName = user.getFirstName() + " " + user.getLastName();
                 // Realizar la llamada a la API
-                callApi(userLogin, loadingAlert, fullName, user.getEmail(), startDate, endDate);
+                callApi(userLogin, loadingAlert, fullName, user.getEmail(), startDate, endDate,hour);
             }
 
         } else {
@@ -147,7 +149,7 @@ public class Login extends AppCompatActivity {
         }
     }
 
-    private void callApi(String userLogin, LoadingAlert loadingAlert, String fullName, String email, String startDate, String endDate) {
+    private void callApi(String userLogin, LoadingAlert loadingAlert, String fullName, String email, String startDate, String endDate,String hour) {
         // Crear una instancia de Retrofit
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -196,11 +198,14 @@ public class Login extends AppCompatActivity {
 
                     Log.e(TAG,"PlannedOrders"+plannedOrders.toString());
 
+                    Log.e(TAG,"Hora"+startDate.toString());
+
                     Intent intent = new Intent(Login.this, InicioActivity.class);
                     intent.putParcelableArrayListExtra("plannedOrders", new ArrayList<>(plannedOrders));
                     intent.putParcelableArrayListExtra("orders", new ArrayList<>(orders));
                     intent.putExtra("user_name", fullName);
                     intent.putExtra("user_email", email);
+                    intent.putExtra("hora_exacta", hour);
                     startActivity(intent);
                     finish();
                 } else {
