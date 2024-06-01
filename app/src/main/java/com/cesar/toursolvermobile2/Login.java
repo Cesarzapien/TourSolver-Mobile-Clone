@@ -41,9 +41,9 @@ import retrofit2.http.Query;
 
 public class Login extends AppCompatActivity {
 
-    private static final String BASE_URL = "https://api.geoconcept.com/tsapi/";
-    private static final String API_KEY = "9e313fb763515473";
-    private static final String ACCEPT = "application/json";
+    public static final String BASE_URL = "https://api.geoconcept.com/tsapi/";
+    public static final String API_KEY = "9e313fb763515473";
+    public static final String ACCEPT = "application/json";
 
     TextInputLayout correo, contrasenia;
     CheckBox rememberMeCheckBox;

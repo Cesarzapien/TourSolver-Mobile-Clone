@@ -1,12 +1,16 @@
 package com.cesar.toursolvermobile2;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,6 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cesar.toursolvermobile2.adapter.PlannedOrderAdapter;
 import com.cesar.toursolvermobile2.databinding.ActivityInicioBinding;
+import com.cesar.toursolvermobile2.model.ApiResponse;
+import com.cesar.toursolvermobile2.model.OperationalOrderAchievement;
 import com.cesar.toursolvermobile2.model.Order;
 import com.cesar.toursolvermobile2.model.PlannedOrder;
 import com.google.android.material.navigation.NavigationView;
@@ -21,11 +27,36 @@ import com.google.android.material.navigation.NavigationView;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.Query;
+
 public class InicioActivity extends DrawerBaseActivity {
+
+    private static final String BASE_URL = "https://api.geoconcept.com/tsapi/";
+    private static final String API_KEY = "9e313fb763515473";
+    private static final String ACCEPT = "application/json";
+
+    public interface ApiService {
+        @GET("fulfillment")
+        Call<ApiResponse> getFulfillment(
+                @Header("tsCloudApiKey") String apiKey,
+                @Header("Accept") String accept,
+                @Query("endDate") String endDate,
+                @Query("startDate") String startDate,
+                @Query("userLogin") String userLogin
+        );
+    }
 
     ActualizarAlert actualizarAlert = new ActualizarAlert(InicioActivity.this);
     TextView userNamee,userEmaill,profileName;
@@ -200,11 +231,102 @@ public class InicioActivity extends DrawerBaseActivity {
         int id = item.getItemId();
 
         if (id == R.id.item_settings) {
-            actualizarAlert.startAlertDialog();
+            refreshData();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void refreshData() {
+        // Mostrar el diálogo de carga
+        actualizarAlert.startAlertDialog();
+
+        // Obtener la fecha y hora actual
+        Calendar calendar = Calendar.getInstance();
+        Date currentDate = calendar.getTime();
+
+        // Calcular la fecha para el día siguiente
+        calendar.add(Calendar.DAY_OF_YEAR, 1);
+        Date tomorrowDate = calendar.getTime();
+
+        // Formatear las fechas en el formato necesario para la llamada a la API
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+        SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        String hour = sdf2.format(currentDate);
+        String startDate = sdf.format(currentDate);
+        String endDate = sdf.format(tomorrowDate);
+
+        // Obtener el correo del usuario (este valor debe ser obtenido desde el intent o algún otro lugar)
+        String userLogin = getIntent().getStringExtra("user_email"); // Asumiendo que es el correo
+
+        // Crear una instancia de Retrofit
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Login.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        // Crear una instancia del servicio de la API
+        Login.ApiService apiService = retrofit.create(Login.ApiService.class);
+
+        // Realizar la llamada a la API
+        Call<ApiResponse> call = apiService.getFulfillment(
+                Login.API_KEY,
+                Login.ACCEPT,
+                endDate, // Usar la fecha de mañana como endDate
+                startDate, // Usar la fecha actual como startDate
+                userLogin
+        );
+
+        // Ejecutar la llamada de manera asíncrona
+        call.enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                actualizarAlert.closeAlertDialog();
+                if (response.isSuccessful() && response.body() != null) {
+                    ApiResponse apiResponse = response.body();
+
+                    List<OperationalOrderAchievement> achievementsList = apiResponse.getOperationalOrderAchievements();
+                    List<PlannedOrder> plannedOrders = new ArrayList<>();
+                    List<Order> orders = new ArrayList<>();
+
+                    // Obtener la lista de PlannedOrder de OperationalOrderAchievement y filtrar los elementos con stopId "Llegada"
+                    for (OperationalOrderAchievement achievement : achievementsList) {
+                        PlannedOrder plannedOrder = achievement.getPlannedOrder();
+                        if (plannedOrder != null && !"Llegada".equals(plannedOrder.getStopId())) {
+                            plannedOrders.add(plannedOrder);
+                        }
+                    }
+
+                    // Obtener la lista de Orders de OperationalOrderAchievement
+                    for (OperationalOrderAchievement achievement : achievementsList) {
+                        Order order = achievement.getOrder();
+                        orders.add(order);
+                    }
+
+                    Log.d(TAG, "Achievement: " + achievementsList.toString());
+                    Log.d(TAG, "PlannedOrder: " + plannedOrders.toString());
+                    Log.d(TAG, "Order: " + orders.toString());
+
+                    // Actualizar el RecyclerView
+                    adapter.updateData(plannedOrders, orders);
+
+                    // Actualizar la hora exacta
+                    horaa.setText("Actualizado hoy a las " + hour);
+
+                } else {
+                    Log.e(TAG, "Error en la respuesta de la API: " + response.errorBody());
+                    Toast.makeText(InicioActivity.this, "Error en la respuesta de la API", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                actualizarAlert.closeAlertDialog();
+                Log.e(TAG, "Error en la llamada a la API", t);
+                Toast.makeText(InicioActivity.this, "Error en la llamada a la API", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 

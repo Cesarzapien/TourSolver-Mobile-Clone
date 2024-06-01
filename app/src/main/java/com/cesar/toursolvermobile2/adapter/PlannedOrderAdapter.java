@@ -32,6 +32,12 @@ public class PlannedOrderAdapter extends RecyclerView.Adapter<PlannedOrderAdapte
         this.orders = orders; // Add this line
     }
 
+    public void updateData(List<PlannedOrder> newPlannedOrders, List<Order> newOrders) {
+        this.plannedOrders = newPlannedOrders;
+        this.orders = newOrders;
+        notifyDataSetChanged(); // Notificar al adaptador que los datos han cambiado
+    }
+
     @NonNull
     @Override
     public PlannedOrderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
