@@ -4,4 +4,7 @@
     <string name="close_navigation_drawer">Close</string>
     <string name="user_name">Cesar Zapien</string>
     <string name="user_email">cesarinss08@gmail.com</string>
+    <string name="map_image">Mapa</string>
+    <string name="info_button">info</string>
+    <string name="back_button">back</string>
 </resources>

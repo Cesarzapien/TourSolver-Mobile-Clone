@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,21 +44,6 @@ import retrofit2.http.Query;
 
 public class InicioActivity extends DrawerBaseActivity {
 
-    private static final String BASE_URL = "https://api.geoconcept.com/tsapi/";
-    private static final String API_KEY = "9e313fb763515473";
-    private static final String ACCEPT = "application/json";
-
-    public interface ApiService {
-        @GET("fulfillment")
-        Call<ApiResponse> getFulfillment(
-                @Header("tsCloudApiKey") String apiKey,
-                @Header("Accept") String accept,
-                @Query("endDate") String endDate,
-                @Query("startDate") String startDate,
-                @Query("userLogin") String userLogin
-        );
-    }
-
     ActualizarAlert actualizarAlert = new ActualizarAlert(InicioActivity.this);
     TextView userNamee,userEmaill,profileName;
     ActivityInicioBinding activityInicioBinding;
@@ -75,6 +61,10 @@ public class InicioActivity extends DrawerBaseActivity {
     private RecyclerView recyclerView;
     private PlannedOrderAdapter adapter;
 
+    public String hora_global;
+
+    private ImageButton boton_cita;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,13 +75,16 @@ public class InicioActivity extends DrawerBaseActivity {
         citaHoraTextView = findViewById(R.id.cita_hora);
         horaa = findViewById(R.id.horaa);
 
+        boton_cita = findViewById(R.id.arrow_button);
+
         // Obtener los datos del Intent
         Intent intent = getIntent();
         String userName = intent.getStringExtra("user_name");
         String userEmail = intent.getStringExtra("user_email");
-        String hora_exact = intent.getStringExtra("hora_exacta");
+        hora_global = intent.getStringExtra("hora_exacta");
 
-        horaa.setText("Actualizado hoy a las " +hora_exact);
+        // Mostrar la hora exacta inicial
+        horaa.setText("Actualizado hoy a las " + hora_global);
 
 
 
@@ -160,6 +153,16 @@ public class InicioActivity extends DrawerBaseActivity {
                 resetTimer();
             }
         });
+
+        boton_cita.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(InicioActivity.this, CitaActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
     }
 
     // Método para formatear la hora en formato HH:mm
@@ -253,7 +256,7 @@ public class InicioActivity extends DrawerBaseActivity {
         // Formatear las fechas en el formato necesario para la llamada a la API
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
         SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm", Locale.getDefault());
-        String hour = sdf2.format(currentDate);
+        hora_global = sdf2.format(currentDate);
         String startDate = sdf.format(currentDate);
         String endDate = sdf.format(tomorrowDate);
 
@@ -312,7 +315,10 @@ public class InicioActivity extends DrawerBaseActivity {
                     adapter.updateData(plannedOrders, orders);
 
                     // Actualizar la hora exacta
-                    horaa.setText("Actualizado hoy a las " + hour);
+                    horaa.setText("Actualizado hoy a las " + hora_global);
+
+                    // Actualizar el Intent con la nueva hora
+                    getIntent().putExtra("hora_exacta", hora_global);
 
                 } else {
                     Log.e(TAG, "Error en la respuesta de la API: " + response.errorBody());

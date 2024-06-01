@@ -17,7 +17,12 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.cesar.toursolvermobile2.model.Order;
+import com.cesar.toursolvermobile2.model.PlannedOrder;
 import com.google.android.material.navigation.NavigationView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DrawerBaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     DrawerLayout drawerLayout;
@@ -57,6 +62,11 @@ public class DrawerBaseActivity extends AppCompatActivity implements NavigationV
         Intent currentIntent = getIntent();
         String userName = currentIntent.getStringExtra("user_name");
         String userEmail = currentIntent.getStringExtra("user_email");
+        // Obtener los datos de PlannedOrder y Order del intent
+        List<PlannedOrder> plannedOrders = getIntent().getParcelableArrayListExtra("plannedOrders");
+        List<Order> orders = getIntent().getParcelableArrayListExtra("orders");
+        String hour = currentIntent.getStringExtra("hora_exacta");
+
 
         Intent intent = null;
 
@@ -90,6 +100,9 @@ public class DrawerBaseActivity extends AppCompatActivity implements NavigationV
         if (intent != null) {
             intent.putExtra("user_name", userName);
             intent.putExtra("user_email", userEmail);
+            intent.putParcelableArrayListExtra("plannedOrders", new ArrayList<>(plannedOrders));
+            intent.putParcelableArrayListExtra("orders", new ArrayList<>(orders));
+            intent.putExtra("hora_exacta", hour);
             startActivity(intent);
             finish();
             overridePendingTransition(0,0);
