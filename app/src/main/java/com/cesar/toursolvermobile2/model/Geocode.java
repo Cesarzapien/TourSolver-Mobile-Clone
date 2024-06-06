@@ -1,8 +1,11 @@
 package com.cesar.toursolvermobile2.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
-public class Geocode {
+public class Geocode implements Parcelable {
 
     @SerializedName("addressComplement")
     private String addressComplement;
@@ -36,6 +39,52 @@ public class Geocode {
 
     @SerializedName("geocodeAddressLine")
     private String geocodeAddressLine;
+
+    protected Geocode(Parcel in) {
+        addressComplement = in.readString();
+        address = in.readString();
+        postcode = in.readString();
+        city = in.readString();
+        country = in.readString();
+        region = in.readString();
+        score = in.readDouble();
+        geocodeType = in.readInt();
+        geocodeCity = in.readString();
+        geocodePostalCode = in.readString();
+        geocodeAddressLine = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(addressComplement);
+        dest.writeString(address);
+        dest.writeString(postcode);
+        dest.writeString(city);
+        dest.writeString(country);
+        dest.writeString(region);
+        dest.writeDouble(score);
+        dest.writeInt(geocodeType);
+        dest.writeString(geocodeCity);
+        dest.writeString(geocodePostalCode);
+        dest.writeString(geocodeAddressLine);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Geocode> CREATOR = new Creator<Geocode>() {
+        @Override
+        public Geocode createFromParcel(Parcel in) {
+            return new Geocode(in);
+        }
+
+        @Override
+        public Geocode[] newArray(int size) {
+            return new Geocode[size];
+        }
+    };
 
     public String getAddressComplement() {
         return addressComplement;

@@ -1,0 +1,9 @@
+<!-- drawable_circle_with_icon.xml -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/circulo_morado" />
+    <item
+        android:drawable="@drawable/abandonada"
+        android:gravity="center"
+        android:width="26dp"
+        android:height="26dp" />
+</layer-list>

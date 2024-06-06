@@ -14,36 +14,81 @@
 
         <ImageButton
             android:id="@+id/backButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:drawable/ic_menu_revert"
+            android:layout_marginTop="4dp"
+            android:layout_marginStart="6dp"
+            android:layout_width="15dp"
+            android:layout_height="24dp"
+            android:background="@drawable/back_arrow"
             android:contentDescription="@string/back_button" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="1dp"
+            android:layout_height="29dp"
+            android:layout_toEndOf="@id/backButton"
+            android:layout_marginStart="8dp"
+            android:background="#FFFFFF" />
 
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
+            android:layout_toEndOf="@id/divider"
+            android:layout_marginStart="8dp"
             android:text="Cita"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:textStyle="bold" />
 
-        <ImageButton
-            android:id="@+id/infoButton"
+        <TextView
+            android:id="@+id/information"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:background="@android:drawable/ic_menu_info_details"
-            android:contentDescription="@string/info_button" />
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:text="Informacion"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"/>
     </RelativeLayout>
+
+    <!-- New Buttons below Header -->
+    <LinearLayout
+        android:id="@+id/newButtonLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:layout_below="@id/header"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/colorPrimary"
+            android:drawableTop="@drawable/informacion"
+            android:gravity="center"
+            android:text="" /> <!-- Centra el drawable horizontalmente en el botón -->
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="41dp"
+            android:layout_weight="1"
+            android:background="@color/colorPrimary"
+            android:drawableTop="@drawable/acciones"
+            android:gravity="center"
+            android:text="" /> <!-- Centra el drawable horizontalmente en el botón -->
+    </LinearLayout>
+
 
     <!-- Map and Details -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/buttonLayout"
-        android:layout_below="@id/header">
+        android:layout_below="@id/newButtonLayout">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -54,7 +99,7 @@
             <ImageView
                 android:id="@+id/mapImage"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="300dp"
                 android:contentDescription="@string/map_image"
                 android:src="@drawable/mapita" />
 
@@ -68,19 +113,19 @@
                     android:id="@+id/nameLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Nombre 31"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/idLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="3000"
+                    android:text="Nombresss 31"
                     android:textSize="20sp"
                     android:textStyle="bold" />
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/idLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="3dp"
+                android:text="3000 zipi"
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/distanceLabel"
@@ -102,20 +147,34 @@
                 android:textColor="#4CAF50"
                 android:textStyle="bold"/>
 
+            <!-- Línea delgada -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.8dp"
+                android:layout_marginTop="8dp"
+                android:background="@android:color/black" />
+
             <TextView
                 android:id="@+id/dateLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Sábado 1 Junio 2024"
+                android:text="Sábadosss 1 Junio 2024"
                 android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/timeSlotLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="09:11 - 09:16"
+                android:text="09:11 - 09:16 siuuu"
                 android:textSize="16sp" />
+
+            <!-- Línea delgada -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.8dp"
+                android:layout_marginTop="10dp"
+                android:background="@android:color/black" />
 
             <TextView
                 android:id="@+id/descriptionLabel"
@@ -130,12 +189,93 @@
                 android:id="@+id/descriptionText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Nombre 31"
+                android:layout_marginTop="9dp"
+                android:text="Nombresss 31"
                 android:textSize="16sp" />
 
-            <!-- Additional Description TextViews as needed -->
-            <!-- Remove duplicates to avoid redundancy -->
-            <!-- If multiple descriptions needed, modify accordingly -->
+            <!-- Línea delgada -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.8dp"
+                android:layout_marginTop="12dp"
+                android:background="@android:color/black" />
+
+            <!-- Empty View 1 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp" />
+
+            <!-- Empty View 2 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp" />
+
+            <!-- Empty View 1 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp" />
+
+            <!-- Empty View 2 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp" />
+
+            <!-- Empty View 1 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp" />
+
+            <!-- Empty View 2 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp" />
+
+            <!-- Empty View 1 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp" />
+
+            <!-- Empty View 2 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp" />
+
+            <!-- Empty View 1 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp" />
+
+            <!-- Empty View 2 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp" />
+
+            <!-- Empty View 1 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp" />
+
+            <!-- Empty View 1 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp" />
+
+            <!-- Empty View 2 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp" />
+
+            <!-- Empty View 1 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp" />
+
+            <!-- Empty View 2 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp" />
+
+
 
         </LinearLayout>
     </ScrollView>
@@ -169,6 +309,4 @@
             android:background="@color/colorPrimaryDark"
             android:drawableTop="@drawable/ic_start" />
     </LinearLayout>
-
-
 </RelativeLayout>

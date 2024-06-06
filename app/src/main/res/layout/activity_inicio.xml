@@ -77,6 +77,7 @@
             android:elevation="8dp">
 
             <View
+                android:id="@+id/rectangulo_cita"
                 android:layout_width="15dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/vertical_rectangle"
@@ -131,7 +132,7 @@
             android:id="@+id/citas_disponibles"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="49 Cita(s)"
+            android:text="X Cita(s)"
             android:textColor="#828181"
             app:layout_constraintTop_toBottomOf="@id/linea_cita"
             app:layout_constraintStart_toStartOf="parent"

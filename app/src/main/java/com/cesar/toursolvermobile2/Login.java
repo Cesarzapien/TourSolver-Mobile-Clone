@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.cesar.toursolvermobile2.DB.DBHelper;
 import com.cesar.toursolvermobile2.DB.User;
 import com.cesar.toursolvermobile2.model.ApiResponse;
+import com.cesar.toursolvermobile2.model.Geocode;
 import com.cesar.toursolvermobile2.model.OperationalOrderAchievement;
 import com.cesar.toursolvermobile2.model.Order;
 import com.cesar.toursolvermobile2.model.PlannedOrder;
@@ -179,11 +180,12 @@ public class Login extends AppCompatActivity {
                     List<OperationalOrderAchievement> achievementsList = apiResponse.getOperationalOrderAchievements();
                     List<PlannedOrder> plannedOrders = new ArrayList<>();
                     List<Order> orders = new ArrayList<>();
+                    List<Geocode> geocodes = new ArrayList<>();
 
                     // Obtener la lista de PlannedOrder de OperationalOrderAchievement y filtrar los elementos con stopId "Llegada"
                     for (OperationalOrderAchievement achievement : achievementsList) {
                         PlannedOrder plannedOrder = achievement.getPlannedOrder();
-                        if (plannedOrder != null && !"Llegada".equals(plannedOrder.getStopId())) {
+                        if (plannedOrder != null && !"Llegada".equals(plannedOrder.getStopId()) && !"Descanso".equals(plannedOrder.getStopId()) ) {
                             plannedOrders.add(plannedOrder);
                         }
                     }
@@ -194,15 +196,27 @@ public class Login extends AppCompatActivity {
                         orders.add(order);
                     }
 
-                    Log.e(TAG,"Orders"+orders.toString());
+                    for(OperationalOrderAchievement achievement : achievementsList) {
+                        Geocode geocode = achievement.getGeocode();
+                        if (geocode != null){
+                            geocodes.add(geocode);
+                        }
+                    }
 
-                    Log.e(TAG,"PlannedOrders"+plannedOrders.toString());
+                    Log.d(TAG,"Orders Login"+orders.toString());
 
-                    Log.e(TAG,"Hora"+startDate.toString());
+                    Log.d(TAG,"PlannedOrders"+plannedOrders.toString());
+
+                    Log.d(TAG,"Hora"+startDate.toString());
+
+                    Log.d(TAG,"Geocode Login "+geocodes.toString());
+
 
                     Intent intent = new Intent(Login.this, InicioActivity.class);
+                    intent.putParcelableArrayListExtra("achievements",new ArrayList<>(achievementsList));
                     intent.putParcelableArrayListExtra("plannedOrders", new ArrayList<>(plannedOrders));
                     intent.putParcelableArrayListExtra("orders", new ArrayList<>(orders));
+                    intent.putParcelableArrayListExtra("geocodes",new ArrayList<>(geocodes));
                     intent.putExtra("user_name", fullName);
                     intent.putExtra("user_email", email);
                     intent.putExtra("hora_exacta", hour);

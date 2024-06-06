@@ -6,10 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cesar.toursolvermobile2.R;
+import com.cesar.toursolvermobile2.model.OperationalOrderAchievement;
 import com.cesar.toursolvermobile2.model.Order;
 import com.cesar.toursolvermobile2.model.PlannedOrder;
 
@@ -24,18 +26,21 @@ public class PlannedOrderAdapter extends RecyclerView.Adapter<PlannedOrderAdapte
 
     private List<PlannedOrder> plannedOrders;
     private List<Order> orders;
+    private List<OperationalOrderAchievement> achievements;
     private Context context;
 
-    public PlannedOrderAdapter(Context context, List<PlannedOrder> plannedOrders, List<Order> orders) { // Add orders here
+    public PlannedOrderAdapter(Context context, List<PlannedOrder> plannedOrders, List<Order> orders,List<OperationalOrderAchievement> achievements) {
         this.context = context;
         this.plannedOrders = plannedOrders;
-        this.orders = orders; // Add this line
+        this.orders = orders;
+        this.achievements = achievements;
     }
 
-    public void updateData(List<PlannedOrder> newPlannedOrders, List<Order> newOrders) {
+    public void updateData(List<PlannedOrder> newPlannedOrders, List<Order> newOrders, List<OperationalOrderAchievement> newAchievements) {
         this.plannedOrders = newPlannedOrders;
         this.orders = newOrders;
-        notifyDataSetChanged(); // Notificar al adaptador que los datos han cambiado
+        this.achievements = newAchievements;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -49,9 +54,10 @@ public class PlannedOrderAdapter extends RecyclerView.Adapter<PlannedOrderAdapte
     public void onBindViewHolder(@NonNull PlannedOrderViewHolder holder, int position) {
         PlannedOrder plannedOrder = plannedOrders.get(position);
         Order order = orders.get(position); // Get corresponding order
+        OperationalOrderAchievement achievement = achievements.get(position); // Get corresponding achievement
 
         if (!"Llegada".equals(plannedOrder.getStopId())) {
-            holder.bind(plannedOrder, order); // Pass order to bind method
+            holder.bind(plannedOrder, order, achievement); // Pass achievement to bind method
         }
     }
 
@@ -72,7 +78,7 @@ public class PlannedOrderAdapter extends RecyclerView.Adapter<PlannedOrderAdapte
             tvIcon = itemView.findViewById(R.id.tv_icon);
         }
 
-        public void bind(PlannedOrder plannedOrder, Order order) { // Add order as parameter
+        public void bind(PlannedOrder plannedOrder, Order order, OperationalOrderAchievement achievement) {
             SimpleDateFormat inputFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
             SimpleDateFormat outputFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
@@ -109,12 +115,28 @@ public class PlannedOrderAdapter extends RecyclerView.Adapter<PlannedOrderAdapte
                 tvRoute.setText("Itinerario");
             }
 
-            // Set the icon drawable based on stopId
+            // Set the icon drawable based on stopId and achievement status
             if ("Salida".equals(plannedOrder.getStopId())) {
                 tvIcon.setImageResource(R.drawable.itinerario_logo);
+            } else if (achievement != null && "STARTED".equals(achievement.getStatus())) {
+                tvIcon.setImageResource(R.drawable.logo_cita_empezada);
+            } else if (achievement != null && "CANCELLED".equals(achievement.getStatus())) {
+                tvIcon.setImageResource(R.drawable.logo_cita_abandonada);
             } else {
                 tvIcon.setImageResource(R.drawable.logo_cita_aceptada);
             }
+
+            // Add OnClickListener to show a Toast message
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if ("Salida".equals(plannedOrder.getStopId())) {
+                        Toast.makeText(context, "Itinerario", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "Cita aceptada", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
         }
     }
 }

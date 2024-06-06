@@ -1,11 +1,14 @@
 package com.cesar.toursolvermobile2.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class OperationalOrderAchievement {
+public class OperationalOrderAchievement implements Parcelable {
     @SerializedName("id")
     private String id;
     @SerializedName("operationalResourceId")
@@ -217,6 +220,196 @@ public class OperationalOrderAchievement {
 
     @SerializedName("timeZone")
     private String timeZone;
+
+    protected OperationalOrderAchievement(Parcel in) {
+        id = in.readString();
+        operationalResourceId = in.readString();
+        date = in.readLong();
+        plannedOrder = in.readParcelable(PlannedOrder.class.getClassLoader());
+        order = in.readParcelable(Order.class.getClassLoader());
+        start = in.readLong();
+        end = in.readLong();
+        if (in.readByte() == 0) {
+            achievementStart = null;
+        } else {
+            achievementStart = in.readLong();
+        }
+        if (in.readByte() == 0) {
+            achievementEnd = null;
+        } else {
+            achievementEnd = in.readLong();
+        }
+        achievementComment = in.readString();
+        achievementStartLat = in.readDouble();
+        achievementStartLon = in.readDouble();
+        achievementEndLat = in.readDouble();
+        achievementEndLon = in.readDouble();
+        status = in.readString();
+        type = in.readString();
+        signerName = in.readString();
+        signatureSvg = in.readString();
+        signaturePicture = in.readString();
+        workerSignatureSvg = in.readString();
+        workerSignaturePicture = in.readString();
+        timeWindowEnd = in.readString();
+        timeWindowStart = in.readString();
+        lastSynchroStatusChange = in.readLong();
+        synchroStatus = in.readString();
+        lon = in.readDouble();
+        lat = in.readDouble();
+        data = in.readParcelable(Data.class.getClassLoader());
+        pictures = in.createStringArray();
+        canAssignPhoto = in.readByte() != 0;
+        simulationId = in.readString();
+        simulationDayId = in.readString();
+        wishedStart = in.readString();
+        wishedEnd = in.readString();
+        appointmentChanged = in.readByte() != 0;
+        appointmentFixed = in.readByte() != 0;
+        invoiceSent = in.readByte() != 0;
+        customerId = in.readString();
+        documentUrls = in.createStringArray();
+        organization = in.readString();
+        canceledByUser = in.readByte() != 0;
+        canceledByCustomer = in.readByte() != 0;
+        rescheduled = in.readByte() != 0;
+        rescheduledInSimulation = in.readString();
+        internalResourceId = in.readString();
+        fuelType = in.readString();
+        vehicleType = in.readString();
+        averageFuelConsumption = in.readString();
+        rescheduleCount = in.readInt();
+        zoneId = in.readString();
+        isLate = in.readByte() != 0;
+        lateStart = in.readString();
+        lateNotificationTimeout = in.readString();
+        tourProgressNotificationSent = in.readByte() != 0;
+        etaOrderId = in.readString();
+        followUpShortLink = in.readString();
+        etaOrderData = in.readString();
+        distance = in.readDouble();
+        scanItems = in.createStringArray();
+        globalScanItemsStatus = in.readString();
+        numberOfDeliveredItems = in.readInt();
+        weatherSkyDescription = in.readString();
+        weatherPrecipitationDesc = in.readString();
+        weatherPrecipitationProbability = in.readDouble();
+        weatherTemperature = in.readDouble();
+        weatherSnowFall = in.readDouble();
+        weatherRainFall = in.readDouble();
+        weatherWindSpeed = in.readDouble();
+        weatherSnowCover = in.readDouble();
+        weatherVisibility = in.readDouble();
+        missionId = in.readString();
+        groupingId = in.readString();
+        routeId = in.readString();
+        timeZone = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(operationalResourceId);
+        dest.writeLong(date);
+        dest.writeParcelable(plannedOrder, flags);
+        dest.writeParcelable(order, flags);
+        dest.writeLong(start);
+        dest.writeLong(end);
+        if (achievementStart == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(achievementStart);
+        }
+        if (achievementEnd == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(achievementEnd);
+        }
+        dest.writeString(achievementComment);
+        dest.writeDouble(achievementStartLat);
+        dest.writeDouble(achievementStartLon);
+        dest.writeDouble(achievementEndLat);
+        dest.writeDouble(achievementEndLon);
+        dest.writeString(status);
+        dest.writeString(type);
+        dest.writeString(signerName);
+        dest.writeString(signatureSvg);
+        dest.writeString(signaturePicture);
+        dest.writeString(workerSignatureSvg);
+        dest.writeString(workerSignaturePicture);
+        dest.writeString(timeWindowEnd);
+        dest.writeString(timeWindowStart);
+        dest.writeLong(lastSynchroStatusChange);
+        dest.writeString(synchroStatus);
+        dest.writeDouble(lon);
+        dest.writeDouble(lat);
+        dest.writeParcelable(data, flags);
+        dest.writeStringArray(pictures);
+        dest.writeByte((byte) (canAssignPhoto ? 1 : 0));
+        dest.writeString(simulationId);
+        dest.writeString(simulationDayId);
+        dest.writeString(wishedStart);
+        dest.writeString(wishedEnd);
+        dest.writeByte((byte) (appointmentChanged ? 1 : 0));
+        dest.writeByte((byte) (appointmentFixed ? 1 : 0));
+        dest.writeByte((byte) (invoiceSent ? 1 : 0));
+        dest.writeString(customerId);
+        dest.writeStringArray(documentUrls);
+        dest.writeString(organization);
+        dest.writeByte((byte) (canceledByUser ? 1 : 0));
+        dest.writeByte((byte) (canceledByCustomer ? 1 : 0));
+        dest.writeByte((byte) (rescheduled ? 1 : 0));
+        dest.writeString(rescheduledInSimulation);
+        dest.writeString(internalResourceId);
+        dest.writeString(fuelType);
+        dest.writeString(vehicleType);
+        dest.writeString(averageFuelConsumption);
+        dest.writeInt(rescheduleCount);
+        dest.writeString(zoneId);
+        dest.writeByte((byte) (isLate ? 1 : 0));
+        dest.writeString(lateStart);
+        dest.writeString(lateNotificationTimeout);
+        dest.writeByte((byte) (tourProgressNotificationSent ? 1 : 0));
+        dest.writeString(etaOrderId);
+        dest.writeString(followUpShortLink);
+        dest.writeString(etaOrderData);
+        dest.writeDouble(distance);
+        dest.writeStringArray(scanItems);
+        dest.writeString(globalScanItemsStatus);
+        dest.writeInt(numberOfDeliveredItems);
+        dest.writeString(weatherSkyDescription);
+        dest.writeString(weatherPrecipitationDesc);
+        dest.writeDouble(weatherPrecipitationProbability);
+        dest.writeDouble(weatherTemperature);
+        dest.writeDouble(weatherSnowFall);
+        dest.writeDouble(weatherRainFall);
+        dest.writeDouble(weatherWindSpeed);
+        dest.writeDouble(weatherSnowCover);
+        dest.writeDouble(weatherVisibility);
+        dest.writeString(missionId);
+        dest.writeString(groupingId);
+        dest.writeString(routeId);
+        dest.writeString(timeZone);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<OperationalOrderAchievement> CREATOR = new Creator<OperationalOrderAchievement>() {
+        @Override
+        public OperationalOrderAchievement createFromParcel(Parcel in) {
+            return new OperationalOrderAchievement(in);
+        }
+
+        @Override
+        public OperationalOrderAchievement[] newArray(int size) {
+            return new OperationalOrderAchievement[size];
+        }
+    };
 
     public String getId() {
         return id;

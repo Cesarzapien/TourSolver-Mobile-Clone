@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.cesar.toursolvermobile2.adapter.PlannedOrderAdapter;
 import com.cesar.toursolvermobile2.databinding.ActivityInicioBinding;
 import com.cesar.toursolvermobile2.model.ApiResponse;
+import com.cesar.toursolvermobile2.model.Geocode;
 import com.cesar.toursolvermobile2.model.OperationalOrderAchievement;
 import com.cesar.toursolvermobile2.model.Order;
 import com.cesar.toursolvermobile2.model.PlannedOrder;
@@ -56,7 +57,7 @@ public class InicioActivity extends DrawerBaseActivity {
     private SimpleDateFormat outputFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
     // TextView para mostrar la próxima cita
-    private TextView citaHoraTextView,horaa;
+    private TextView citaHoraTextView,horaa,citasDisponibles,citaNombre;
 
     private RecyclerView recyclerView;
     private PlannedOrderAdapter adapter;
@@ -72,9 +73,10 @@ public class InicioActivity extends DrawerBaseActivity {
         setContentView(activityInicioBinding.getRoot());
 
         // Referenciar el TextView de la próxima cita
+        citasDisponibles = findViewById(R.id.citas_disponibles);
         citaHoraTextView = findViewById(R.id.cita_hora);
+        citaNombre = findViewById(R.id.cita_nombre);
         horaa = findViewById(R.id.horaa);
-
         boton_cita = findViewById(R.id.arrow_button);
 
         // Obtener los datos del Intent
@@ -92,22 +94,50 @@ public class InicioActivity extends DrawerBaseActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Obtener los datos de PlannedOrder y Order del intent
+        List<OperationalOrderAchievement> achievements = getIntent().getParcelableArrayListExtra("achievements");
         List<PlannedOrder> plannedOrders = getIntent().getParcelableArrayListExtra("plannedOrders");
         List<Order> orders = getIntent().getParcelableArrayListExtra("orders");
+        List<Geocode> geocodes = getIntent().getParcelableArrayListExtra("geocodes");
+
+        Log.d(TAG,"Orders Inicio 1 "+orders.toString());
+        Log.d(TAG,"achievements Inicio "+achievements.toString());
+        Log.d(TAG,"Geocode Inicio"+geocodes.toString());
+
+        // Obtener el tamaño de la lista plannedOrders
+        int numCitas = plannedOrders.size();
+
+        // Restar 1 al tamaño de la lista
+        numCitas -= 1;
+
+        // Convertir el resultado a String
+        String citasDisponiblesText = numCitas + " Cita(s)";
+
+        // Establecer el texto en el TextView citasDisponibles
+        citasDisponibles.setText(citasDisponiblesText);
+
+        // Verificar si hay datos disponibles y obtener la próxima posición válida desde la segunda posición
+        int validIndex = getNextValidIndex(achievements, 1); // Comenzar desde la segunda posición
+
 
         // Verificar si hay datos disponibles y obtener la segunda posición
-        if (plannedOrders != null && plannedOrders.size() > 1 && orders != null && orders.size() > 1) {
-            PlannedOrder plannedOrder = plannedOrders.get(1); // Segunda posición
-            Order order = orders.get(1); // Segunda posición
+        if (plannedOrders != null && orders != null && validIndex >= 0) {
+            PlannedOrder plannedOrder = plannedOrders.get(validIndex); // Posición válida
+            Order order = orders.get(validIndex); // Posición válida
+
+            //Log.d(TAG,"orders Inicio 2 "+ order.toString());
 
             // Formatear la hora de inicio de la parada
             String startTimeFormatted = formatTime(plannedOrder.getStopStartTime());
+
+            // Obtener el nombre de la cita
+            String nombrecita = order.getLabel();
 
             // Formatear la hora de finalización y la duración
             String endTimeAndDurationFormatted = calculateEndTime(plannedOrder.getStopStartTime(), plannedOrder.getStopDuration());
 
             // Construir el texto para mostrar la próxima cita
             String citaHoraText = startTimeFormatted + " - " + endTimeAndDurationFormatted;
+            citaNombre.setText(nombrecita);
             citaHoraTextView.setText(citaHoraText);
         }else{
             // Si las listas están vacías, ocultar los elementos y mostrar el texto "Ninguna cita planificada hoy"
@@ -123,7 +153,7 @@ public class InicioActivity extends DrawerBaseActivity {
         }
 
         // Configurar el RecyclerView con el adaptador
-        adapter = new PlannedOrderAdapter(this, plannedOrders, orders); // Pass orders to adapter
+        adapter = new PlannedOrderAdapter(this, plannedOrders, orders,achievements); // Pass orders to adapter
         recyclerView.setAdapter(adapter);
 
         // Obtener la referencia del NavigationView
@@ -158,11 +188,29 @@ public class InicioActivity extends DrawerBaseActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(InicioActivity.this, CitaActivity.class);
+                intent.putExtra("position",validIndex);
+                intent.putExtra("user_name", userName);
+                intent.putExtra("user_email", userEmail);
+                intent.putParcelableArrayListExtra("plannedOrders", new ArrayList<>(plannedOrders));
+                intent.putParcelableArrayListExtra("orders", new ArrayList<>(orders));
+                intent.putParcelableArrayListExtra("achievements",new ArrayList<>(achievements));
+                intent.putParcelableArrayListExtra("geocodes",new ArrayList<>(geocodes));
+                intent.putExtra("hora_exacta", hora_global);
                 startActivity(intent);
                 finish();
             }
         });
 
+    }
+
+    // Método para obtener el próximo índice válido comenzando desde la segunda posición
+    private int getNextValidIndex(List<OperationalOrderAchievement> achievements, int startIndex) {
+        for (int i = startIndex; i < achievements.size(); i++) {
+            if (!"CANCELLED".equals(achievements.get(i).getStatus())) {
+                return i;
+            }
+        }
+        return -1; // Devuelve -1 si no se encuentra un índice válido
     }
 
     // Método para formatear la hora en formato HH:mm
@@ -312,7 +360,7 @@ public class InicioActivity extends DrawerBaseActivity {
                     Log.d(TAG, "Order: " + orders.toString());
 
                     // Actualizar el RecyclerView
-                    adapter.updateData(plannedOrders, orders);
+                    adapter.updateData(plannedOrders, orders,achievementsList);
 
                     // Actualizar la hora exacta
                     horaa.setText("Actualizado hoy a las " + hora_global);

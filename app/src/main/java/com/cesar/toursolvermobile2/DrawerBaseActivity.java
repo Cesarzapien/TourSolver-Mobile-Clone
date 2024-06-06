@@ -17,6 +17,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.cesar.toursolvermobile2.model.Geocode;
 import com.cesar.toursolvermobile2.model.Order;
 import com.cesar.toursolvermobile2.model.PlannedOrder;
 import com.google.android.material.navigation.NavigationView;
@@ -65,6 +66,7 @@ public class DrawerBaseActivity extends AppCompatActivity implements NavigationV
         // Obtener los datos de PlannedOrder y Order del intent
         List<PlannedOrder> plannedOrders = getIntent().getParcelableArrayListExtra("plannedOrders");
         List<Order> orders = getIntent().getParcelableArrayListExtra("orders");
+        //List<Geocode> geocodes = getIntent().getParcelableArrayListExtra("geocodes");
         String hour = currentIntent.getStringExtra("hora_exacta");
 
 
@@ -102,6 +104,7 @@ public class DrawerBaseActivity extends AppCompatActivity implements NavigationV
             intent.putExtra("user_email", userEmail);
             intent.putParcelableArrayListExtra("plannedOrders", new ArrayList<>(plannedOrders));
             intent.putParcelableArrayListExtra("orders", new ArrayList<>(orders));
+            //intent.putParcelableArrayListExtra("geocodes",new ArrayList<>(geocodes));
             intent.putExtra("hora_exacta", hour);
             startActivity(intent);
             finish();
