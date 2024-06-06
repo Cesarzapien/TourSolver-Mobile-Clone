@@ -36,6 +36,7 @@ android {
 }
 
 dependencies {
+    implementation(files("C:\\Users\\cesar\\AndroidStudioProjects\\TourSolverMobile2\\heresdk\\heresdk.aar"))
     implementation ("com.squareup.retrofit2:retrofit:2.10.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.10.0")
     implementation(libs.appcompat)
@@ -45,4 +46,5 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    implementation ("com.google.android.gms:play-services-location:21.2.0")
 }
