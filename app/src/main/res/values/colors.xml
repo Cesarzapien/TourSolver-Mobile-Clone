@@ -7,4 +7,7 @@
     <color name="white">@android:color/white</color>
     <color name="gray">@android:color/darker_gray</color>
     <color name="greenColor">#4CAF50</color> <!-- Ejemplo de color verde -->
+    <color name="amarillo">#feba27</color>
+    <color name="rojo">#e08081</color>
+    <color name="morado">#9a7d99</color>
 </resources>

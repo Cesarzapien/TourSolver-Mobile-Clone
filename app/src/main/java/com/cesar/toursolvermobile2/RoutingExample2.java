@@ -1,22 +1,3 @@
-/*
- * Copyright (C) 2019-2024 HERE Europe B.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * SPDX-License-Identifier: Apache-2.0
- * License-Filename: LICENSE
- */
-
 package com.cesar.toursolvermobile2;
 
 import android.content.Context;
@@ -63,9 +44,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-public class RoutingExample {
+public class RoutingExample2 {
 
-    private static final String TAG = RoutingExample.class.getName();
+    private static final String TAG = RoutingExample2.class.getName();
 
     private final Context context;
     private final MapView mapView;
@@ -75,11 +56,11 @@ public class RoutingExample {
     private GeoCoordinates startGeoCoordinates;
     private GeoCoordinates destinationGeoCoordinates;
 
-    public RoutingExample(Context context, MapView mapView, GeoCoordinates coordendas) {
+    public RoutingExample2(Context context, MapView mapView, GeoCoordinates coordendas) {
         this.context = context;
         this.mapView = mapView;
         MapCamera camera = mapView.getCamera();
-        double distanceInMeters = 700;
+        double distanceInMeters = 1000 * 10;
         MapMeasure mapMeasureZoom = new MapMeasure(MapMeasure.Kind.DISTANCE, distanceInMeters);
         camera.lookAt(coordendas, mapMeasureZoom);
 
@@ -90,52 +71,39 @@ public class RoutingExample {
         }
     }
 
-    public void addRoute(GeoCoordinates coordenadas_iniciales, GeoCoordinates coordenadas_destino) {
-        try {
-            clearRoute();
-            startGeoCoordinates = coordenadas_iniciales;
-            destinationGeoCoordinates = coordenadas_destino;
-            Waypoint startWaypoint = new Waypoint(startGeoCoordinates);
-            Waypoint destinationWaypoint = new Waypoint(destinationGeoCoordinates);
+    public void addRoute(GeoCoordinates coordenadas_iniciales,GeoCoordinates coordenadas_destino) {
+        clearRoute();
+        startGeoCoordinates = coordenadas_iniciales;
+        destinationGeoCoordinates = coordenadas_destino;
+        Waypoint startWaypoint = new Waypoint(startGeoCoordinates);
+        Waypoint destinationWaypoint = new Waypoint(destinationGeoCoordinates);
 
-            List<Waypoint> waypoints = new ArrayList<>(Arrays.asList(startWaypoint, destinationWaypoint));
+        List<Waypoint> waypoints =
+                new ArrayList<>(Arrays.asList(startWaypoint, destinationWaypoint));
 
-            CarOptions carOptions = new CarOptions();
-            carOptions.routeOptions.enableTolls = true;
+        CarOptions carOptions = new CarOptions();
+        carOptions.routeOptions.enableTolls = true;
 
-            routingEngine.calculateRoute(
-                    waypoints,
-                    carOptions,
-                    new CalculateRouteCallback() {
-                        @Override
-                        public void onRouteCalculated(@Nullable RoutingError routingError, @Nullable List<Route> routes) {
-                            if (routingError == null) {
-                                if (routes != null && !routes.isEmpty()) {
-                                    Route route = routes.get(0);
-                                    showRouteDetails(route);
-                                    showRouteOnMap(route);
-                                    logRouteSectionDetails(route);
-                                    logRouteViolations(route);
-                                    logTollDetails(route);
-                                } else {
-                                    showDialog("Error", "No routes found");
-                                    Log.e(TAG, "No routes found");
-                                }
-                            } else {
-                                showDialog("Error while calculating a route:", routingError.toString());
-                                Log.e(TAG, "RoutingError: " + routingError.toString());
-                            }
+        routingEngine.calculateRoute(
+                waypoints,
+                carOptions,
+                new CalculateRouteCallback() {
+                    @Override
+                    public void onRouteCalculated(@Nullable RoutingError routingError, @Nullable List<Route> routes) {
+                        if (routingError == null) {
+                            Route route = routes.get(0);
+                            showRouteDetails(route);
+                            showRouteOnMap(route);
+                            logRouteSectionDetails(route);
+                            logRouteViolations(route);
+                            logTollDetails(route);
+                        } else {
+                            showDialog("Error while calculating a route:", routingError.toString());
                         }
                     }
-            );
-        } catch (Exception e) {
-            Log.e(TAG, "Exception in addRoute: " + e.getMessage(), e);
-            showDialog("Error", "Exception: " + e.getMessage());
-        }
+                });
     }
 
-    // A route may contain several warnings, for example, when a certain route option could not be fulfilled.
-    // An implementation may decide to reject a route if one or more violations are detected.
     private void logRouteViolations(Route route) {
         for (Section section : route.getSections()) {
             for (SectionNotice notice : section.getSectionNotices()) {
@@ -193,11 +161,11 @@ public class RoutingExample {
         long estimatedTrafficDelayInSeconds = route.getTrafficDelay().getSeconds();
         int lengthInMeters = route.getLengthInMeters();
 
-        String routeDetails = "Tiempo de viaje: " + formatTime(estimatedTravelTimeInSeconds)
-                + ", Tráfico: " + formatTime(estimatedTrafficDelayInSeconds)
-                + ", Distancia: " + formatLength(lengthInMeters);
+        String routeDetails = "Travel Time: " + formatTime(estimatedTravelTimeInSeconds)
+                + ", traffic delay: " + formatTime(estimatedTrafficDelayInSeconds)
+                + ", Length: " + formatLength(lengthInMeters);
 
-        Log.d(TAG,"Detalles de la ruta "+routeDetails);
+        showDialog("Route Details", routeDetails);
     }
 
     private String formatTime(long sec) {
@@ -247,8 +215,8 @@ public class RoutingExample {
                 route.getSections().get(route.getSections().size() - 1).getArrivalPlace().mapMatchedCoordinates;
 
         // Draw a circle to indicate starting point and destination.
-        addCircleMapMarker(startPoint, R.drawable.marcador_rojo);
-        addCircleMapMarker(destination, R.drawable.marcador_azul);
+        addCircleMapMarker(startPoint, R.drawable.marcador_azul);
+        addCircleMapMarker(destination, R.drawable.marcador_rojo);
 
         // Log maneuver instructions per route section.
         List<Section> sections = route.getSections();
@@ -296,7 +264,7 @@ public class RoutingExample {
 
                             // Draw a circle to indicate the location of the waypoints.
                             addCircleMapMarker(waypoint1.coordinates, R.drawable.marcador_azul);
-                            addCircleMapMarker(waypoint2.coordinates, R.drawable.marcador_azul);
+                            addCircleMapMarker(waypoint2.coordinates, R.drawable.marcador_rojo);
                         } else {
                             showDialog("Error while calculating a route:", routingError.toString());
                         }
@@ -316,7 +284,7 @@ public class RoutingExample {
         mapMarkerList.clear();
     }
 
-    private void clearRoute() {
+    public void clearRoute() {
         for (MapPolyline mapPolyline : mapPolylines) {
             mapView.getMapScene().removeMapPolyline(mapPolyline);
         }
@@ -342,9 +310,9 @@ public class RoutingExample {
                 MapPolyline trafficSpanMapPolyline = null;
                 try {
                     trafficSpanMapPolyline = new MapPolyline(span.getGeometry(), new MapPolyline.SolidRepresentation(
-                                    new MapMeasureDependentRenderSize(RenderSize.Unit.PIXELS, widthInPixels),
-                                    lineColor,
-                                    LineCap.ROUND));
+                            new MapMeasureDependentRenderSize(RenderSize.Unit.PIXELS, widthInPixels),
+                            lineColor,
+                            LineCap.ROUND));
                 }  catch (MapPolyline.Representation.InstantiationException e) {
                     Log.e("MapPolyline Representation Exception:", e.error.name());
                 } catch (MapMeasureDependentRenderSize.InstantiationException e) {
@@ -357,12 +325,6 @@ public class RoutingExample {
         }
     }
 
-    // Define a traffic color scheme based on the route's jam factor.
-    // 0 <= jamFactor < 4: No or light traffic.
-    // 4 <= jamFactor < 8: Moderate or slow traffic.
-    // 8 <= jamFactor < 10: Severe traffic.
-    // jamFactor = 10: No traffic, ie. the road is blocked.
-    // Returns null in case of no or light traffic.
     @Nullable
     private Color getTrafficColor(Double jamFactor) {
         if (jamFactor == null || jamFactor < 4) {

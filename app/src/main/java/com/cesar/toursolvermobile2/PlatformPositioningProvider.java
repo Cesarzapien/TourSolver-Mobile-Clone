@@ -15,7 +15,6 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 
-// A simple Android based positioning implementation.
 public class PlatformPositioningProvider implements LocationListener {
 
     public static final String LOG_TAG = PlatformPositioningProvider.class.getName();

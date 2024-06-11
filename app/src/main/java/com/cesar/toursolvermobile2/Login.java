@@ -18,6 +18,7 @@ import com.cesar.toursolvermobile2.DB.DBHelper;
 import com.cesar.toursolvermobile2.DB.User;
 import com.cesar.toursolvermobile2.model.ApiResponse;
 import com.cesar.toursolvermobile2.model.Geocode;
+import com.cesar.toursolvermobile2.model.LastKnownPosition;
 import com.cesar.toursolvermobile2.model.OperationalOrderAchievement;
 import com.cesar.toursolvermobile2.model.Order;
 import com.cesar.toursolvermobile2.model.PlannedOrder;
@@ -177,10 +178,13 @@ public class Login extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     ApiResponse apiResponse = response.body();
 
+                    List<LastKnownPosition> lastKnownPositions = apiResponse.getLastKnownPosition();
                     List<OperationalOrderAchievement> achievementsList = apiResponse.getOperationalOrderAchievements();
                     List<PlannedOrder> plannedOrders = new ArrayList<>();
                     List<Order> orders = new ArrayList<>();
                     List<Geocode> geocodes = new ArrayList<>();
+
+                    Log.d(TAG,"Last Known"+lastKnownPositions.toString());
 
                     // Obtener la lista de PlannedOrder de OperationalOrderAchievement y filtrar los elementos con stopId "Llegada"
                     for (OperationalOrderAchievement achievement : achievementsList) {
@@ -213,6 +217,7 @@ public class Login extends AppCompatActivity {
 
 
                     Intent intent = new Intent(Login.this, InicioActivity.class);
+                    intent.putParcelableArrayListExtra("positioning",new ArrayList<>(lastKnownPositions));
                     intent.putParcelableArrayListExtra("achievements",new ArrayList<>(achievementsList));
                     intent.putParcelableArrayListExtra("plannedOrders", new ArrayList<>(plannedOrders));
                     intent.putParcelableArrayListExtra("orders", new ArrayList<>(orders));

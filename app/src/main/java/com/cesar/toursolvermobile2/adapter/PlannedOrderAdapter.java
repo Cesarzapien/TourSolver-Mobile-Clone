@@ -122,6 +122,8 @@ public class PlannedOrderAdapter extends RecyclerView.Adapter<PlannedOrderAdapte
                 tvIcon.setImageResource(R.drawable.logo_cita_empezada);
             } else if (achievement != null && "CANCELLED".equals(achievement.getStatus())) {
                 tvIcon.setImageResource(R.drawable.logo_cita_abandonada);
+            } else if (achievement != null && "FINISHED".equals(achievement.getStatus())) {
+                tvIcon.setImageResource(R.drawable.logo_cita_finalizada);
             } else {
                 tvIcon.setImageResource(R.drawable.logo_cita_aceptada);
             }
@@ -132,6 +134,8 @@ public class PlannedOrderAdapter extends RecyclerView.Adapter<PlannedOrderAdapte
                 public void onClick(View v) {
                     if ("Salida".equals(plannedOrder.getStopId())) {
                         Toast.makeText(context, "Itinerario", Toast.LENGTH_SHORT).show();
+                    } else if (achievement != null && "FINISHED".equals(achievement.getStatus())) {
+                        Toast.makeText(context, "Cita terminada", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(context, "Cita aceptada", Toast.LENGTH_SHORT).show();
                     }

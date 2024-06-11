@@ -3,16 +3,19 @@ package com.cesar.toursolvermobile2;
 import static android.content.ContentValues.TAG;
 
 import android.content.Intent;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,6 +24,7 @@ import com.cesar.toursolvermobile2.adapter.PlannedOrderAdapter;
 import com.cesar.toursolvermobile2.databinding.ActivityInicioBinding;
 import com.cesar.toursolvermobile2.model.ApiResponse;
 import com.cesar.toursolvermobile2.model.Geocode;
+import com.cesar.toursolvermobile2.model.LastKnownPosition;
 import com.cesar.toursolvermobile2.model.OperationalOrderAchievement;
 import com.cesar.toursolvermobile2.model.Order;
 import com.cesar.toursolvermobile2.model.PlannedOrder;
@@ -49,8 +53,9 @@ public class InicioActivity extends DrawerBaseActivity {
     TextView userNamee,userEmaill,profileName;
     ActivityInicioBinding activityInicioBinding;
     private CountDownTimer mCountDownTimer;
-    private static final long COUNTDOWN_TIME = 180000; // 3 minutos
+    private static final long COUNTDOWN_TIME = 600000; // 10 minutos
     private boolean isPaused = true;
+    private boolean updateData;
 
     // Define el formato de hora para parsear y formatear
     private SimpleDateFormat inputFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
@@ -65,6 +70,12 @@ public class InicioActivity extends DrawerBaseActivity {
     public String hora_global;
 
     private ImageButton boton_cita;
+    private List<LastKnownPosition> lastKnownPositions2;
+    private List<PlannedOrder> plannedOrders2;
+    private List<Order> orders2;
+    private List<OperationalOrderAchievement> achievements2;
+    private List<Geocode> geocodes2 ;
+    private Button agenda,sitios;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +84,8 @@ public class InicioActivity extends DrawerBaseActivity {
         setContentView(activityInicioBinding.getRoot());
 
         // Referenciar el TextView de la próxima cita
+        agenda = findViewById(R.id.button_agenda);
+        sitios = findViewById(R.id.button_sitios);
         citasDisponibles = findViewById(R.id.citas_disponibles);
         citaHoraTextView = findViewById(R.id.cita_hora);
         citaNombre = findViewById(R.id.cita_nombre);
@@ -85,6 +98,8 @@ public class InicioActivity extends DrawerBaseActivity {
         String userEmail = intent.getStringExtra("user_email");
         hora_global = intent.getStringExtra("hora_exacta");
 
+        updateData = false;
+
         // Mostrar la hora exacta inicial
         horaa.setText("Actualizado hoy a las " + hora_global);
 
@@ -94,11 +109,14 @@ public class InicioActivity extends DrawerBaseActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Obtener los datos de PlannedOrder y Order del intent
+        List<LastKnownPosition> lastKnownPositions = getIntent().getParcelableArrayListExtra("positioning");
         List<OperationalOrderAchievement> achievements = getIntent().getParcelableArrayListExtra("achievements");
         List<PlannedOrder> plannedOrders = getIntent().getParcelableArrayListExtra("plannedOrders");
         List<Order> orders = getIntent().getParcelableArrayListExtra("orders");
         List<Geocode> geocodes = getIntent().getParcelableArrayListExtra("geocodes");
 
+
+        Log.d(TAG,"Positioning "+lastKnownPositions.toString());
         Log.d(TAG,"Orders Inicio 1 "+orders.toString());
         Log.d(TAG,"achievements Inicio "+achievements.toString());
         Log.d(TAG,"Geocode Inicio"+geocodes.toString());
@@ -107,7 +125,7 @@ public class InicioActivity extends DrawerBaseActivity {
         int numCitas = plannedOrders.size();
 
         // Restar 1 al tamaño de la lista
-        numCitas -= 1;
+        numCitas -= 2;
 
         // Convertir el resultado a String
         String citasDisponiblesText = numCitas + " Cita(s)";
@@ -123,8 +141,23 @@ public class InicioActivity extends DrawerBaseActivity {
         if (plannedOrders != null && orders != null && validIndex >= 0) {
             PlannedOrder plannedOrder = plannedOrders.get(validIndex); // Posición válida
             Order order = orders.get(validIndex); // Posición válida
+            OperationalOrderAchievement operationalOrderAchievement = achievements.get(validIndex);
 
             //Log.d(TAG,"orders Inicio 2 "+ order.toString());
+
+            View cita_rectangulo = findViewById(R.id.rectangulo_cita);
+
+            if ("STARTED".equals(operationalOrderAchievement.getStatus())){
+                // Obtener el drawable del background del View
+                GradientDrawable drawable = (GradientDrawable) cita_rectangulo.getBackground();
+                // Cambiar el color del drawable
+                drawable.setColor(ContextCompat.getColor(this, R.color.amarillo));
+            }else{
+                // Obtener el drawable del background del View
+                GradientDrawable drawable = (GradientDrawable) cita_rectangulo.getBackground();
+                // Cambiar el color del drawable
+                drawable.setColor(ContextCompat.getColor(this, R.color.rojo));
+            }
 
             // Formatear la hora de inicio de la parada
             String startTimeFormatted = formatTime(plannedOrder.getStopStartTime());
@@ -187,17 +220,98 @@ public class InicioActivity extends DrawerBaseActivity {
         boton_cita.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(InicioActivity.this, CitaActivity.class);
-                intent.putExtra("position",validIndex);
-                intent.putExtra("user_name", userName);
-                intent.putExtra("user_email", userEmail);
-                intent.putParcelableArrayListExtra("plannedOrders", new ArrayList<>(plannedOrders));
-                intent.putParcelableArrayListExtra("orders", new ArrayList<>(orders));
-                intent.putParcelableArrayListExtra("achievements",new ArrayList<>(achievements));
-                intent.putParcelableArrayListExtra("geocodes",new ArrayList<>(geocodes));
-                intent.putExtra("hora_exacta", hora_global);
-                startActivity(intent);
-                finish();
+                if (updateData){
+                    Intent intent = new Intent(InicioActivity.this, CitaActivity.class);
+                    intent.putExtra("position",validIndex);
+                    intent.putExtra("user_name", userName);
+                    intent.putExtra("user_email", userEmail);
+                    intent.putParcelableArrayListExtra("positioning",new ArrayList<>(lastKnownPositions2));
+                    intent.putParcelableArrayListExtra("plannedOrders", new ArrayList<>(plannedOrders2));
+                    intent.putParcelableArrayListExtra("orders", new ArrayList<>(orders2));
+                    intent.putParcelableArrayListExtra("achievements",new ArrayList<>(achievements2));
+                    intent.putParcelableArrayListExtra("geocodes",new ArrayList<>(geocodes2));
+                    intent.putExtra("hora_exacta", hora_global);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Intent intent = new Intent(InicioActivity.this, CitaActivity.class);
+                    intent.putExtra("position",validIndex);
+                    intent.putExtra("user_name", userName);
+                    intent.putExtra("user_email", userEmail);
+                    intent.putParcelableArrayListExtra("positioning",new ArrayList<>(lastKnownPositions));
+                    intent.putParcelableArrayListExtra("plannedOrders", new ArrayList<>(plannedOrders));
+                    intent.putParcelableArrayListExtra("orders", new ArrayList<>(orders));
+                    intent.putParcelableArrayListExtra("achievements",new ArrayList<>(achievements));
+                    intent.putParcelableArrayListExtra("geocodes",new ArrayList<>(geocodes));
+                    intent.putExtra("hora_exacta", hora_global);
+                    startActivity(intent);
+                    finish();
+                }
+
+            }
+        });
+
+        agenda.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (updateData){
+                    Intent intent1 = new Intent(InicioActivity.this, AgendaActivity.class);
+                    intent1.putExtra("position",validIndex);
+                    intent1.putExtra("user_name", userName);
+                    intent1.putExtra("user_email", userEmail);
+                    intent1.putParcelableArrayListExtra("positioning",new ArrayList<>(lastKnownPositions2));
+                    intent1.putParcelableArrayListExtra("plannedOrders", new ArrayList<>(plannedOrders2));
+                    intent1.putParcelableArrayListExtra("orders", new ArrayList<>(orders2));
+                    intent1.putParcelableArrayListExtra("achievements",new ArrayList<>(achievements2));
+                    intent1.putParcelableArrayListExtra("geocodes",new ArrayList<>(geocodes2));
+                    intent1.putExtra("hora_exacta", hora_global);
+                    startActivity(intent1);
+                    finish();
+                } else {
+                    Intent intent2 = new Intent(InicioActivity.this, AgendaActivity.class);
+                    intent2.putExtra("position",validIndex);
+                    intent2.putExtra("user_name", userName);
+                    intent2.putExtra("user_email", userEmail);
+                    intent2.putParcelableArrayListExtra("positioning",new ArrayList<>(lastKnownPositions));
+                    intent2.putParcelableArrayListExtra("plannedOrders", new ArrayList<>(plannedOrders));
+                    intent2.putParcelableArrayListExtra("orders", new ArrayList<>(orders));
+                    intent2.putParcelableArrayListExtra("achievements",new ArrayList<>(achievements));
+                    intent2.putParcelableArrayListExtra("geocodes",new ArrayList<>(geocodes));
+                    intent2.putExtra("hora_exacta", hora_global);
+                    startActivity(intent2);
+                    finish();
+                }
+            }
+        });
+
+        sitios.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (updateData){
+                    Intent intent = new Intent(InicioActivity.this, SitesActivity.class);
+                    intent.putExtra("position",validIndex);
+                    intent.putExtra("user_name", userName);
+                    intent.putExtra("user_email", userEmail);
+                    intent.putParcelableArrayListExtra("positioning",new ArrayList<>(lastKnownPositions2));
+                    intent.putParcelableArrayListExtra("plannedOrders", new ArrayList<>(plannedOrders2));
+                    intent.putParcelableArrayListExtra("orders", new ArrayList<>(orders2));
+                    intent.putParcelableArrayListExtra("achievements",new ArrayList<>(achievements2));
+                    intent.putParcelableArrayListExtra("geocodes",new ArrayList<>(geocodes2));
+                    intent.putExtra("hora_exacta", hora_global);
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(InicioActivity.this, SitesActivity.class);
+                    intent.putExtra("position",validIndex);
+                    intent.putExtra("user_name", userName);
+                    intent.putExtra("user_email", userEmail);
+                    intent.putParcelableArrayListExtra("positioning",new ArrayList<>(lastKnownPositions));
+                    intent.putParcelableArrayListExtra("plannedOrders", new ArrayList<>(plannedOrders));
+                    intent.putParcelableArrayListExtra("orders", new ArrayList<>(orders));
+                    intent.putParcelableArrayListExtra("achievements",new ArrayList<>(achievements));
+                    intent.putParcelableArrayListExtra("geocodes",new ArrayList<>(geocodes));
+                    intent.putExtra("hora_exacta", hora_global);
+                    startActivity(intent);
+                }
             }
         });
 
@@ -206,7 +320,7 @@ public class InicioActivity extends DrawerBaseActivity {
     // Método para obtener el próximo índice válido comenzando desde la segunda posición
     private int getNextValidIndex(List<OperationalOrderAchievement> achievements, int startIndex) {
         for (int i = startIndex; i < achievements.size(); i++) {
-            if (!"CANCELLED".equals(achievements.get(i).getStatus())) {
+            if (!"CANCELLED".equals(achievements.get(i).getStatus()) && !"FINISHED".equals(achievements.get(i).getStatus())) {
                 return i;
             }
         }
@@ -282,106 +396,168 @@ public class InicioActivity extends DrawerBaseActivity {
         int id = item.getItemId();
 
         if (id == R.id.item_settings) {
-            refreshData();
+            // Call refreshData after a successful response
+            updateData = true; // Indicar que se ha realizado un cambio
+            refreshData(updateData); // Indicar que se ha realizado un cambio
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void refreshData() {
-        // Mostrar el diálogo de carga
-        actualizarAlert.startAlertDialog();
+    private void refreshData(boolean updateData) {
+        if (updateData) {
+            // Mostrar el diálogo de carga
+            actualizarAlert.startAlertDialog();
 
-        // Obtener la fecha y hora actual
-        Calendar calendar = Calendar.getInstance();
-        Date currentDate = calendar.getTime();
+            // Obtener la fecha y hora actual
+            Calendar calendar = Calendar.getInstance();
+            Date currentDate = calendar.getTime();
 
-        // Calcular la fecha para el día siguiente
-        calendar.add(Calendar.DAY_OF_YEAR, 1);
-        Date tomorrowDate = calendar.getTime();
+            // Calcular la fecha para el día siguiente
+            calendar.add(Calendar.DAY_OF_YEAR, 1);
+            Date tomorrowDate = calendar.getTime();
 
-        // Formatear las fechas en el formato necesario para la llamada a la API
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
-        SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm", Locale.getDefault());
-        hora_global = sdf2.format(currentDate);
-        String startDate = sdf.format(currentDate);
-        String endDate = sdf.format(tomorrowDate);
+            // Formatear las fechas en el formato necesario para la llamada a la API
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+            SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            hora_global = sdf2.format(currentDate);
+            String startDate = sdf.format(currentDate);
+            String endDate = sdf.format(tomorrowDate);
 
-        // Obtener el correo del usuario (este valor debe ser obtenido desde el intent o algún otro lugar)
-        String userLogin = getIntent().getStringExtra("user_email"); // Asumiendo que es el correo
+            // Obtener el correo del usuario (este valor debe ser obtenido desde el intent o algún otro lugar)
+            String userLogin = getIntent().getStringExtra("user_email"); // Asumiendo que es el correo
 
-        // Crear una instancia de Retrofit
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Login.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+            // Crear una instancia de Retrofit
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(Login.BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
 
-        // Crear una instancia del servicio de la API
-        Login.ApiService apiService = retrofit.create(Login.ApiService.class);
+            // Crear una instancia del servicio de la API
+            Login.ApiService apiService = retrofit.create(Login.ApiService.class);
 
-        // Realizar la llamada a la API
-        Call<ApiResponse> call = apiService.getFulfillment(
-                Login.API_KEY,
-                Login.ACCEPT,
-                endDate, // Usar la fecha de mañana como endDate
-                startDate, // Usar la fecha actual como startDate
-                userLogin
-        );
+            // Realizar la llamada a la API
+            Call<ApiResponse> call = apiService.getFulfillment(
+                    Login.API_KEY,
+                    Login.ACCEPT,
+                    endDate, // Usar la fecha de mañana como endDate
+                    startDate, // Usar la fecha actual como startDate
+                    userLogin
+            );
 
-        // Ejecutar la llamada de manera asíncrona
-        call.enqueue(new Callback<ApiResponse>() {
-            @Override
-            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
-                actualizarAlert.closeAlertDialog();
-                if (response.isSuccessful() && response.body() != null) {
-                    ApiResponse apiResponse = response.body();
+            // Ejecutar la llamada de manera asíncrona
+            call.enqueue(new Callback<ApiResponse>() {
+                @Override
+                public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                    actualizarAlert.closeAlertDialog();
+                    if (response.isSuccessful() && response.body() != null) {
+                        ApiResponse apiResponse = response.body();
 
-                    List<OperationalOrderAchievement> achievementsList = apiResponse.getOperationalOrderAchievements();
-                    List<PlannedOrder> plannedOrders = new ArrayList<>();
-                    List<Order> orders = new ArrayList<>();
+                        lastKnownPositions2 = apiResponse.getLastKnownPosition();
+                        achievements2 = apiResponse.getOperationalOrderAchievements();
+                        plannedOrders2 = new ArrayList<>();
+                        orders2 = new ArrayList<>();
+                        geocodes2 = new ArrayList<>();
 
-                    // Obtener la lista de PlannedOrder de OperationalOrderAchievement y filtrar los elementos con stopId "Llegada"
-                    for (OperationalOrderAchievement achievement : achievementsList) {
-                        PlannedOrder plannedOrder = achievement.getPlannedOrder();
-                        if (plannedOrder != null && !"Llegada".equals(plannedOrder.getStopId())) {
-                            plannedOrders.add(plannedOrder);
+                        // Obtener la lista de PlannedOrder de OperationalOrderAchievement y filtrar los elementos con stopId "Llegada"
+                        for (OperationalOrderAchievement achievement : achievements2) {
+                            PlannedOrder plannedOrder = achievement.getPlannedOrder();
+                            if (plannedOrder != null && !"Llegada".equals(plannedOrder.getStopId())) {
+                                plannedOrders2.add(plannedOrder);
+                            }
                         }
+
+                        // Obtener la lista de Orders de OperationalOrderAchievement
+                        for (OperationalOrderAchievement achievement : achievements2) {
+                            Order order = achievement.getOrder();
+                            orders2.add(order);
+                        }
+
+                        for (OperationalOrderAchievement achievement : achievements2) {
+                            Geocode geocode = achievement.getGeocode();
+                            if (geocode != null) {
+                                geocodes2.add(geocode);
+                            }
+                        }
+
+                        // Verificar si hay datos disponibles y obtener la próxima posición válida desde la segunda posición
+                        int validIndex = getNextValidIndex(achievements2, 1); // Comenzar desde la segunda posición
+
+
+                        // Verificar si hay datos disponibles y obtener la segunda posición
+                        if (plannedOrders2 != null && orders2 != null && validIndex >= 0) {
+                            PlannedOrder plannedOrder = plannedOrders2.get(validIndex); // Posición válida
+                            Order order = orders2.get(validIndex); // Posición válida
+                            OperationalOrderAchievement operationalOrderAchievement = achievements2.get(validIndex);
+
+                            //Log.d(TAG,"orders Inicio 2 "+ order.toString());
+
+                            View cita_rectangulo = findViewById(R.id.rectangulo_cita);
+
+                            if ("STARTED".equals(operationalOrderAchievement.getStatus())) {
+                                // Obtener el drawable del background del View
+                                GradientDrawable drawable = (GradientDrawable) cita_rectangulo.getBackground();
+                                // Cambiar el color del drawable
+                                drawable.setColor(ContextCompat.getColor(InicioActivity.this, R.color.amarillo));
+                            } else {
+                                // Obtener el drawable del background del View
+                                GradientDrawable drawable = (GradientDrawable) cita_rectangulo.getBackground();
+                                // Cambiar el color del drawable
+                                drawable.setColor(ContextCompat.getColor(InicioActivity.this, R.color.rojo));
+                            }
+                        } else {
+                            // Si las listas están vacías, ocultar los elementos y mostrar el texto "Ninguna cita planificada hoy"
+                            recyclerView.setVisibility(View.GONE);
+                            findViewById(R.id.proxima_cita_textview).setVisibility(View.GONE);
+                            findViewById(R.id.cita_detalles).setVisibility(View.GONE);
+                            findViewById(R.id.linea_cita).setVisibility(View.GONE);
+
+                            TextView noCitasTextView = findViewById(R.id.citas_disponibles);
+                            noCitasTextView.setVisibility(View.VISIBLE);
+                            noCitasTextView.setText("Ninguna cita planificada hoy");
+                            noCitasTextView.setTextColor(getResources().getColor(R.color.gray)); // Establece el color de texto a gris
+                        }
+
+                        Log.d(TAG, "Achievement: " + achievements2.toString());
+                        Log.d(TAG, "PlannedOrder: " + plannedOrders2.toString());
+                        Log.d(TAG, "Order: " + orders2.toString());
+
+                        // Actualizar el RecyclerView
+                        adapter.updateData(plannedOrders2, orders2, achievements2);
+
+                        // Actualizar la hora exacta
+                        horaa.setText("Actualizado hoy a las " + hora_global);
+
+                        // Crear un nuevo Intent
+                    /*Intent newIntent = new Intent(InicioActivity.this, InicioActivity.class);
+                    newIntent.putExtra("user_name", getIntent().getStringExtra("user_name"));
+                    newIntent.putExtra("user_email", getIntent().getStringExtra("user_email"));
+                    newIntent.putExtra("hora_exacta", hora_global);
+                    newIntent.putParcelableArrayListExtra("positioning", new ArrayList<>(lastKnownPositions));
+                    newIntent.putParcelableArrayListExtra("plannedOrders", new ArrayList<>(plannedOrders));
+                    newIntent.putParcelableArrayListExtra("orders", new ArrayList<>(orders));
+                    newIntent.putParcelableArrayListExtra("achievements", new ArrayList<>(achievementsList));
+                    newIntent.putParcelableArrayListExtra("geocodes",new ArrayList<>(geocodes));
+                    // Reemplazar el Intent actual con el nuevo Intent
+                    setIntent(newIntent);*/
+
+                    } else {
+                        Log.e(TAG, "Error en la respuesta de la API: " + response.errorBody());
+                        Toast.makeText(InicioActivity.this, "Error en la respuesta de la API", Toast.LENGTH_SHORT).show();
                     }
-
-                    // Obtener la lista de Orders de OperationalOrderAchievement
-                    for (OperationalOrderAchievement achievement : achievementsList) {
-                        Order order = achievement.getOrder();
-                        orders.add(order);
-                    }
-
-                    Log.d(TAG, "Achievement: " + achievementsList.toString());
-                    Log.d(TAG, "PlannedOrder: " + plannedOrders.toString());
-                    Log.d(TAG, "Order: " + orders.toString());
-
-                    // Actualizar el RecyclerView
-                    adapter.updateData(plannedOrders, orders,achievementsList);
-
-                    // Actualizar la hora exacta
-                    horaa.setText("Actualizado hoy a las " + hora_global);
-
-                    // Actualizar el Intent con la nueva hora
-                    getIntent().putExtra("hora_exacta", hora_global);
-
-                } else {
-                    Log.e(TAG, "Error en la respuesta de la API: " + response.errorBody());
-                    Toast.makeText(InicioActivity.this, "Error en la respuesta de la API", Toast.LENGTH_SHORT).show();
                 }
-            }
 
-            @Override
-            public void onFailure(Call<ApiResponse> call, Throwable t) {
-                actualizarAlert.closeAlertDialog();
-                Log.e(TAG, "Error en la llamada a la API", t);
-                Toast.makeText(InicioActivity.this, "Error en la llamada a la API", Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onFailure(Call<ApiResponse> call, Throwable t) {
+                    actualizarAlert.closeAlertDialog();
+                    Log.e(TAG, "Error en la llamada a la API", t);
+                    Toast.makeText(InicioActivity.this, "Error en la llamada a la API", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
+
 
 
 

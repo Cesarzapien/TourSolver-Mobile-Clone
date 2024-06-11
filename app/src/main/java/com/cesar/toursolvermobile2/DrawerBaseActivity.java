@@ -18,6 +18,8 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.cesar.toursolvermobile2.model.Geocode;
+import com.cesar.toursolvermobile2.model.LastKnownPosition;
+import com.cesar.toursolvermobile2.model.OperationalOrderAchievement;
 import com.cesar.toursolvermobile2.model.Order;
 import com.cesar.toursolvermobile2.model.PlannedOrder;
 import com.google.android.material.navigation.NavigationView;
@@ -64,9 +66,11 @@ public class DrawerBaseActivity extends AppCompatActivity implements NavigationV
         String userName = currentIntent.getStringExtra("user_name");
         String userEmail = currentIntent.getStringExtra("user_email");
         // Obtener los datos de PlannedOrder y Order del intent
+        List<OperationalOrderAchievement> achievements = getIntent().getParcelableArrayListExtra("achievements");
+        List<LastKnownPosition> lastKnownPositions = getIntent().getParcelableArrayListExtra("positioning");
         List<PlannedOrder> plannedOrders = getIntent().getParcelableArrayListExtra("plannedOrders");
         List<Order> orders = getIntent().getParcelableArrayListExtra("orders");
-        //List<Geocode> geocodes = getIntent().getParcelableArrayListExtra("geocodes");
+        List<Geocode> geocodes = getIntent().getParcelableArrayListExtra("geocodes");
         String hour = currentIntent.getStringExtra("hora_exacta");
 
 
@@ -102,9 +106,11 @@ public class DrawerBaseActivity extends AppCompatActivity implements NavigationV
         if (intent != null) {
             intent.putExtra("user_name", userName);
             intent.putExtra("user_email", userEmail);
+            intent.putParcelableArrayListExtra("positioning",new ArrayList<>(lastKnownPositions));
             intent.putParcelableArrayListExtra("plannedOrders", new ArrayList<>(plannedOrders));
             intent.putParcelableArrayListExtra("orders", new ArrayList<>(orders));
-            //intent.putParcelableArrayListExtra("geocodes",new ArrayList<>(geocodes));
+            intent.putParcelableArrayListExtra("achievements",new ArrayList<>(achievements));
+            intent.putParcelableArrayListExtra("geocodes",new ArrayList<>(geocodes));
             intent.putExtra("hora_exacta", hour);
             startActivity(intent);
             finish();

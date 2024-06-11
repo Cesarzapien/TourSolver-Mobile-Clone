@@ -1,156 +1,196 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".InicioActivity">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/button_layout">
 
-        <LinearLayout
-            android:id="@+id/linear_profile"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="220dp"
-            android:orientation="vertical"
-            android:gravity="center_horizontal"
-            android:padding="16dp"
-            android:background="#eae8ed"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
-
-            <include
-                android:id="@+id/profile_pic_view2"
-                layout="@layout/profile_pic_view_inicio"
-                android:layout_width="110dp"
-                android:layout_height="110dp"
-                android:layout_marginBottom="16dp" />
-
-            <TextView
-                android:id="@+id/profilename"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Erick Villaseñor"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#000000"
-                android:layout_marginBottom="8dp"/>
-
-            <TextView
-                android:id="@+id/horaa"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Actualizado hoy a las 12:50"
-                android:textSize="14sp"
-                android:textColor="#FFA500"
-                android:textStyle="bold"/>
-
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/proxima_cita_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Próxima cita"
-            android:textColor="#828181"
-            app:layout_constraintTop_toBottomOf="@id/linear_profile"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="28dp"
-            android:layout_marginStart="16dp"
-            android:textStyle="bold"
-            android:textSize="16sp" />
-
-        <LinearLayout
-            android:id="@+id/cita_detalles"
-            android:layout_width="match_parent"
-            android:layout_height="75dp"
-            android:orientation="horizontal"
-            android:layout_marginTop="19dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintTop_toBottomOf="@id/proxima_cita_textview"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:elevation="8dp">
-
-            <View
-                android:id="@+id/rectangulo_cita"
-                android:layout_width="15dp"
-                android:layout_height="match_parent"
-                android:background="@drawable/vertical_rectangle"
-                android:layout_marginRight="10dp"/>
+            android:layout_height="wrap_content">
 
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:id="@+id/linear_profile"
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
                 android:orientation="vertical"
-                android:layout_weight="1">
+                android:gravity="center_horizontal"
+                android:padding="16dp"
+                android:background="#eae8ed"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <include
+                    android:id="@+id/profile_pic_view2"
+                    layout="@layout/profile_pic_view_inicio"
+                    android:layout_width="110dp"
+                    android:layout_height="110dp"
+                    android:layout_marginBottom="16dp" />
 
                 <TextView
-                    android:id="@+id/cita_hora"
+                    android:id="@+id/profilename"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="09:11 - 09:16 (5 min)"
-                    android:textColor="#000000"
-                    android:textSize="14sp"
+                    android:text="Erick Villaseñor"
+                    android:textSize="18sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="4dp"/>
+                    android:textColor="#000000"
+                    android:layout_marginBottom="8dp"/>
 
                 <TextView
-                    android:id="@+id/cita_nombre"
+                    android:id="@+id/horaa"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Nombre 31"
-                    android:textColor="#000000"
-                    android:textSize="14sp"/>
+                    android:text="Actualizado hoy a las 12:50"
+                    android:textSize="14sp"
+                    android:textColor="#FFA500"
+                    android:textStyle="bold"/>
+
             </LinearLayout>
 
-            <ImageButton
-                android:id="@+id/arrow_button"
+            <TextView
+                android:id="@+id/proxima_cita_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/baseline_arrow_forward_ios_24"
-                android:layout_gravity="center_vertical"/>
-        </LinearLayout>
+                android:text="Próxima cita"
+                android:textColor="#828181"
+                app:layout_constraintTop_toBottomOf="@id/linear_profile"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="28dp"
+                android:layout_marginStart="16dp"
+                android:textStyle="bold"
+                android:textSize="16sp" />
 
-        <!-- Línea negra delgada -->
-        <View
-            android:id="@+id/linea_cita"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#000000"
-            app:layout_constraintTop_toBottomOf="@id/cita_detalles"
-            android:layout_marginTop="3dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"/>
+            <LinearLayout
+                android:id="@+id/cita_detalles"
+                android:layout_width="match_parent"
+                android:layout_height="75dp"
+                android:orientation="horizontal"
+                android:layout_marginTop="19dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintTop_toBottomOf="@id/proxima_cita_textview"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:elevation="8dp">
 
-        <TextView
-            android:id="@+id/citas_disponibles"
-            android:layout_width="wrap_content"
+                <View
+                    android:id="@+id/rectangulo_cita"
+                    android:layout_width="15dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/vertical_rectangle"
+                    android:layout_marginRight="10dp"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/cita_hora"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="09:11 - 09:16 (5 min)"
+                        android:textColor="#000000"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp"/>
+
+                    <TextView
+                        android:id="@+id/cita_nombre"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Nombre 31"
+                        android:textColor="#000000"
+                        android:textSize="14sp"/>
+                </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/arrow_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/baseline_arrow_forward_ios_24"
+                    android:layout_gravity="center_vertical"/>
+            </LinearLayout>
+
+            <!-- Línea negra delgada -->
+            <View
+                android:id="@+id/linea_cita"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#000000"
+                app:layout_constraintTop_toBottomOf="@id/cita_detalles"
+                android:layout_marginTop="3dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"/>
+
+            <TextView
+                android:id="@+id/citas_disponibles"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="X Cita(s)"
+                android:textColor="#828181"
+                app:layout_constraintTop_toBottomOf="@id/linea_cita"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="25dp"
+                android:layout_marginStart="16dp"
+                android:textStyle="bold"
+                android:textSize="16sp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/citas_disponibles"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:padding="8dp"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@color/colorPrimary"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/button_agenda"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="X Cita(s)"
-            android:textColor="#828181"
-            app:layout_constraintTop_toBottomOf="@id/linea_cita"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="25dp"
-            android:layout_marginStart="16dp"
-            android:textStyle="bold"
-            android:textSize="16sp"/>
+            android:layout_weight="1"
+            android:text="Agenda"
+            android:drawableTop="@drawable/agenda_icon"
+            android:layout_marginEnd="4dp"
+            android:gravity="center"
+            android:background="@color/colorPrimary"/>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/button_sitios"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/citas_disponibles"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:padding="8dp"/>
+            android:layout_weight="1"
+            android:text="Sitios"
+            android:drawableTop="@drawable/baseline_location_on_24"
+            android:layout_marginStart="4dp"
+            android:gravity="center"
+            android:background="@color/colorPrimary"/>
+    </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</androidx.core.widget.NestedScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

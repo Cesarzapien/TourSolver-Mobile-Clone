@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CitaActivity">
+    tools:context=".AccionesActivity">
 
     <!-- Header with Back Button and Title -->
     <RelativeLayout
@@ -13,7 +13,7 @@
         android:padding="10dp">
 
         <ImageButton
-            android:id="@+id/backButton"
+            android:id="@+id/backButton_acciones"
             android:layout_marginTop="4dp"
             android:layout_marginStart="6dp"
             android:layout_width="15dp"
@@ -22,18 +22,18 @@
             android:contentDescription="@string/back_button" />
 
         <View
-            android:id="@+id/divider"
+            android:id="@+id/divider_acciones"
             android:layout_width="1dp"
             android:layout_height="29dp"
-            android:layout_toEndOf="@id/backButton"
+            android:layout_toEndOf="@id/backButton_acciones"
             android:layout_marginStart="8dp"
             android:background="#FFFFFF" />
 
         <TextView
-            android:id="@+id/title"
+            android:id="@+id/title_acciones"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/divider"
+            android:layout_toEndOf="@id/divider_acciones"
             android:layout_marginStart="8dp"
             android:text="Cita"
             android:textColor="#FFFFFF"
@@ -46,14 +46,14 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:text="Informacion"
+            android:text="Acciones a realizar"
             android:textColor="#FFFFFF"
             android:textSize="14sp"/>
     </RelativeLayout>
 
     <!-- New Buttons below Header -->
     <LinearLayout
-        android:id="@+id/newButtonLayout"
+        android:id="@+id/newButtonLayout_acciones"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -62,22 +62,17 @@
         android:gravity="center">
 
         <Button
-            android:id="@+id/button1"
+            android:id="@+id/button1_acciones"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/greenColor"
+            android:background="@color/colorPrimary"
             android:drawableTop="@drawable/informacion"
             android:gravity="center"
             android:text="" /> <!-- Centra el drawable horizontalmente en el botón -->
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="#FFFFFF" />
-
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/button2_acciones"
             android:layout_width="wrap_content"
             android:layout_height="41dp"
             android:layout_weight="1"
@@ -86,7 +81,7 @@
             android:gravity="center"
             android:text="" />
         <Button
-            android:id="@+id/button1_2"
+            android:id="@+id/button1_2_acciones"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -96,13 +91,8 @@
             android:text=""
             android:visibility="gone"/> <!-- Centra el drawable horizontalmente en el botón -->
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="#FFFFFF" />
-
         <Button
-            android:id="@+id/button2_2"
+            android:id="@+id/button2_2_acciones"
             android:layout_width="0dp"
             android:layout_height="41dp"
             android:layout_weight="1"
@@ -113,13 +103,8 @@
             android:visibility="gone"/>
         <!-- Centra el drawable horizontalmente en el botón -->
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="#FFFFFF" />
-
         <Button
-            android:id="@+id/button3_2"
+            android:id="@+id/button3_2_acciones"
             android:layout_width="0dp"
             android:layout_height="41dp"
             android:layout_weight="1"
@@ -130,27 +115,19 @@
             android:visibility="gone"/><!-- Centra el drawable horizontalmente en el botón -->
     </LinearLayout>
 
-
-
     <!-- Map and Details -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/buttonLayout"
-        android:layout_below="@id/newButtonLayout">
+        android:layout_above="@+id/buttonLayout_acciones"
+        android:layout_below="@id/newButtonLayout_acciones"
+        android:id="@+id/scroll_view_acciones">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp">
-
-            <com.here.sdk.mapview.MapView
-                android:id="@+id/map_view"
-                android:layout_width="match_parent"
-                android:layout_height="200dp">
-            </com.here.sdk.mapview.MapView>
-
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -159,102 +136,118 @@
                 android:layout_marginTop="16dp">
 
                 <TextView
-                    android:id="@+id/nameLabel"
+                    android:id="@+id/nameLabel_acciones"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Nombresss 31"
-                    android:textSize="20sp"
+                    android:text="Informe"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/idLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_marginStart="3dp"
-                android:text="3000 zipi"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/distanceLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Distancia estimada: 379.45 Km"
-                android:textSize="16sp"
-                android:textColor="#4CAF50"
-                android:textStyle="bold"/>
-
-            <TextView
-                android:id="@+id/timeLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Tiempo estimado de viaje: 4 h 21 min"
-                android:textSize="16sp"
-                android:textColor="#4CAF50"
-                android:textStyle="bold"/>
-
-            <!-- Línea delgada -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.8dp"
-                android:layout_marginTop="8dp"
-                android:background="@android:color/black" />
-
-            <TextView
-                android:id="@+id/dateLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Sábadosss 1 Junio 2024"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/timeSlotLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="09:11 - 09:16 siuuu"
-                android:textSize="16sp" />
-
-            <!-- Línea delgada -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.8dp"
-                android:layout_marginTop="10dp"
-                android:background="@android:color/black" />
-
-            <TextView
-                android:id="@+id/descriptionLabel"
+            <!-- Added Fields Below -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Descripción"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:orientation="vertical"
+                android:layout_marginTop="16dp">
 
-            <TextView
-                android:id="@+id/descriptionText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="9dp"
-                android:text="Nombresss 31"
-                android:textSize="16sp" />
+                <TextView
+                    android:id="@+id/contractLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Contrato"
+                    android:textSize="16sp"
+                    android:layout_marginTop="8dp" />
 
-            <!-- Línea delgada -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.8dp"
-                android:layout_marginTop="12dp"
-                android:background="@android:color/black" />
+                <EditText
+                    android:id="@+id/contractInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false" />
 
+                <TextView
+                    android:id="@+id/storeLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tienda"
+                    android:textSize="16sp"
+                    android:layout_marginTop="8dp" />
+
+                <EditText
+                    android:id="@+id/storeInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false" />
+
+                <TextView
+                    android:id="@+id/visitTypeLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tipo de Visita"
+                    android:textSize="16sp"
+                    android:layout_marginTop="8dp" />
+
+                <EditText
+                    android:id="@+id/visitTypeInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false" />
+
+                <TextView
+                    android:id="@+id/addressLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Dirección"
+                    android:textSize="16sp"
+                    android:layout_marginTop="8dp" />
+
+                <EditText
+                    android:id="@+id/addressInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false" />
+
+                <TextView
+                    android:id="@+id/observationsLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Observaciones"
+                    android:textSize="16sp"
+                    android:layout_marginTop="8dp" />
+
+                <EditText
+                    android:id="@+id/observationsInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false" />
+
+                <TextView
+                    android:id="@+id/customerNameLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nombre del Cliente"
+                    android:textSize="16sp"
+                    android:layout_marginTop="8dp" />
+
+                <EditText
+                    android:id="@+id/customerNameInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Ingrese el nombre del cliente"
+                    android:inputType="textPersonName"
+                    android:enabled="true"
+                    android:importantForAccessibility="yes"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:required="true" />
+            </LinearLayout>
+            <!-- End of Added Fields -->
         </LinearLayout>
     </ScrollView>
 
     <!-- Fixed Buttons at the Bottom -->
     <LinearLayout
-        android:id="@+id/buttonLayout"
+        android:id="@+id/buttonLayout_acciones"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -263,7 +256,7 @@
         android:gravity="center">
 
         <Button
-            android:id="@+id/abandonButton"
+            android:id="@+id/abandonButton_acciones"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -274,13 +267,12 @@
 
         <!-- Divider Line -->
         <View
-            android:id="@+id/accepted_line"
             android:layout_width="1dp"
             android:layout_height="match_parent"
             android:background="#FFFFFF" />
 
         <Button
-            android:id="@+id/startButton"
+            android:id="@+id/startButton_acciones"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -288,9 +280,8 @@
             android:drawableTop="@drawable/ic_start"
             android:gravity="center"
             android:text="Comenzar"/>
-
         <Button
-            android:id="@+id/cancelbuttonn"
+            android:id="@+id/abandonButton2_acciones"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -302,13 +293,12 @@
 
         <!-- Divider Line -->
         <View
-            android:id="@+id/started_line"
             android:layout_width="1dp"
             android:layout_height="match_parent"
             android:background="#FFFFFF" />
 
         <Button
-            android:id="@+id/continuebutton"
+            android:id="@+id/startButton2_acciones"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
